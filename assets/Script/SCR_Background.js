@@ -8,13 +8,7 @@
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/life-cycle-callbacks.html
 
-var ObstaclePosition = cc.Enum({
-    TOP:    0,
-	MIDDLE: 1,
-    BOTTOM: 2
-});
-
-var SCR_Obstacle = cc.Class({
+cc.Class({
     extends: cc.Component,
 
     properties: {
@@ -33,43 +27,20 @@ var SCR_Obstacle = cc.Class({
         //         this._bar = value;
         //     }
         // },
-
-        position: {
-            default: ObstaclePosition.TOP,
-            type: ObstaclePosition
-        }
     },
 
     // LIFE-CYCLE CALLBACKS:
 
-    onLoad() {
-        this.SPEED = 200;
-        this.rb = this.node.getComponent(cc.RigidBody);
-        this.passedPlayer = false;
+    onLoad () {
+        this.SPEED = 50;
     },
 
-    update(dt) {
-        // score
-        if (this.position == ObstaclePosition.TOP && !this.passedPlayer && this.node.x < g_scrPlayer.node.x) {
-            g_scrGameplay.increaseScore();
-            this.passedPlayer = true;
-        }
-
-        // out of screen
-        if (this.node.x < -SCREEN_WIDTH * 0.5 - this.node.width * 0.5 * this.node.scaleX) {
-            this.node.destroy();
-            var index = g_scrGameplay.obstacles.indexOf(this.node);
-            g_scrGameplay.obstacles.splice(index, 1);
+    update (dt) {
+        if (g_scrGameplay.state != State.FINISH) {
+            this.node.x -= this.SPEED * dt;
+            if (this.node.x <= -this.node.width) {
+                this.node.x += this.node.width * 2;
+            }
         }
     },
-
-    move() {
-        this.rb.linearVelocity = cc.v2(-this.SPEED, 0);
-    },
-
-    stop() {
-        this.rb.linearVelocity = cc.v2(0, 0);
-    }
 });
-
-window.SCR_Obstacle = SCR_Obstacle;

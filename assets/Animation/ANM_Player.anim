@@ -1,0 +1,31 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "ANM_Player",
+  "_objFlags": 0,
+  "_rawFiles": null,
+  "_duration": 0.1,
+  "sample": 20,
+  "speed": 1,
+  "wrapMode": "22",
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "ab21d5f7-aa3a-40a1-8da4-cb25a6dc287c"
+            }
+          },
+          {
+            "frame": 0.05,
+            "value": {
+              "__uuid__": "1a5123aa-f8f9-4de9-9cfc-8e7abceed08d"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "events": []
+}

@@ -1,11 +1,19 @@
 window.SCREEN_WIDTH = 0;
 window.SCREEN_HEIGHT = 0;
 
+window.LAYER_BACKGROUND = 0;
+window.LAYER_OBSTACLE_MIDDLE = 1;
+window.LAYER_OBSTACLE = 2;
+window.LAYER_PLAYER = 3;
+window.LAYER_UI = 4;
+
 var State = cc.Enum({
     READY:  0,
     PLAY:   1,
     FINISH: 2 
 });
+
+window.State = State;
 
 cc.Class({
     extends: cc.Component,
@@ -67,17 +75,12 @@ cc.Class({
             self.onTouchStart(event);
         }, this.node);
 
-        this.OBSTACLE_DISTANCE = SCREEN_WIDTH * 0.5;
-        this.OBSTACLE_SPACE = SCREEN_WIDTH * 0.8;
+        this.OBSTACLE_DISTANCE = SCREEN_WIDTH * 0.8;
+        this.OBSTACLE_SPACE = SCREEN_WIDTH * 0.5;
 
         this.obstacles = [];
 
         window.g_scrGameplay= this;
-
-        this.lblScore.zIndex = 1;
-        this.lblGameOver.zIndex = 1;
-        this.lblResultScore.zIndex = 1;
-        this.lblResultBest.zIndex = 1;
 
         this.score = 0;
         this.best = cc.sys.localStorage.getItem("best");
@@ -100,6 +103,13 @@ cc.Class({
 
         this.generateObstacles();
 
+        g_scrPlayer.node.zIndex = LAYER_PLAYER;
+
+        this.lblScore.zIndex = LAYER_UI;
+        this.lblGameOver.zIndex = LAYER_UI;
+        this.lblResultScore.zIndex = LAYER_UI;
+        this.lblResultBest.zIndex = LAYER_UI;
+
         this.state = State.READY;
     },
 
@@ -110,6 +120,7 @@ cc.Class({
 
             this.obstacleTop.getComponent(SCR_Obstacle).move();
             this.obstacleBottom.getComponent(SCR_Obstacle).move();
+            this.obstacleMiddle.getComponent(SCR_Obstacle).move();
         }
     },
 
@@ -118,6 +129,7 @@ cc.Class({
             this.lblTapToPlay.active = false;
             this.obstacleTop.getComponent(SCR_Obstacle).move();
             this.obstacleBottom.getComponent(SCR_Obstacle).move();
+            this.obstacleMiddle.getComponent(SCR_Obstacle).move();
             g_scrPlayer.enableGravity();
 
             this.state = State.PLAY;
@@ -135,6 +147,7 @@ cc.Class({
     generateObstacles() {
         this.obstacleTop = cc.instantiate(this.PFB_OBSTACLE_TOP);
         this.obstacleBottom = cc.instantiate(this.PFB_OBSTACLE_BOTTOM);
+        this.obstacleMiddle = cc.instantiate(this.PFB_OBSTACLE_MIDDLE);
 
         this.SPAWN_X = SCREEN_WIDTH * 0.5 + this.obstacleTop.width * 0.5 * this.obstacleTop.scaleX;
 
@@ -143,13 +156,21 @@ cc.Class({
         this.obstacleTop.parent = this.node;
         this.obstacleTop.x = this.SPAWN_X;
         this.obstacleTop.y = refY + this.OBSTACLE_SPACE * 0.5 + this.obstacleTop.height * this.obstacleTop.scaleY * 0.5;
+        this.obstacleTop.zIndex = LAYER_OBSTACLE;
 
         this.obstacleBottom.parent = this.node;
         this.obstacleBottom.x = this.SPAWN_X;
         this.obstacleBottom.y = refY - this.OBSTACLE_SPACE * 0.5 - this.obstacleBottom.height * this.obstacleBottom.scaleY * 0.5;
+        this.obstacleBottom.zIndex = LAYER_OBSTACLE;
+
+        this.obstacleMiddle.parent = this.node;
+        this.obstacleMiddle.x = this.SPAWN_X;
+        this.obstacleMiddle.y = refY;
+        this.obstacleMiddle.zIndex = LAYER_OBSTACLE_MIDDLE;
 
         this.obstacles.push(this.obstacleTop);
         this.obstacles.push(this.obstacleBottom);
+        this.obstacles.push(this.obstacleMiddle);
     },
 
     gameOver() {
