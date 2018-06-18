@@ -15,6 +15,11 @@ cc.Class({
             default: null,
             type: cc.Prefab
         },
+		
+		PFB_OBSTACLE_MIDDLE: {
+			default: null,
+			type: cc.Prefab
+		},
 
         PFB_OBSTACLE_BOTTOM: {
             default: null,

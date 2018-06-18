@@ -10,7 +10,8 @@
 
 var ObstaclePosition = cc.Enum({
     TOP:    0,
-    BOTTOM: 1
+	MIDDLE: 1,
+    BOTTOM: 2
 });
 
 var SCR_Obstacle = cc.Class({
