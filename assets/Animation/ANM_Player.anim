@@ -3,10 +3,10 @@
   "_name": "ANM_Player",
   "_objFlags": 0,
   "_rawFiles": null,
-  "_duration": 0.1,
-  "sample": 20,
+  "_duration": 0.4,
+  "sample": 10,
   "speed": 1,
-  "wrapMode": "22",
+  "wrapMode": 1,
   "curveData": {
     "comps": {
       "cc.Sprite": {
@@ -14,18 +14,31 @@
           {
             "frame": 0,
             "value": {
-              "__uuid__": "ab21d5f7-aa3a-40a1-8da4-cb25a6dc287c"
+              "__uuid__": "90e65be5-a875-44c2-986a-a7678046861c"
             }
           },
           {
-            "frame": 0.05,
+            "frame": 0.1,
             "value": {
-              "__uuid__": "1a5123aa-f8f9-4de9-9cfc-8e7abceed08d"
+              "__uuid__": "0a045003-f40d-4581-9b2f-0903f4ea6b48"
+            }
+          },
+          {
+            "frame": 0.2,
+            "value": {
+              "__uuid__": "09e68e42-0ec6-4777-9a3a-e52b5a70180a"
+            }
+          },
+          {
+            "frame": 0.3,
+            "value": {
+              "__uuid__": "6f39f80d-6424-4924-b9d9-0b0297e8c4e9"
             }
           }
         ]
       }
-    }
+    },
+    "props": {}
   },
   "events": []
 }

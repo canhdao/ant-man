@@ -4,13 +4,15 @@ window.SCREEN_HEIGHT = 0;
 window.LAYER_BACKGROUND = 0;
 window.LAYER_OBSTACLE_MIDDLE = 1;
 window.LAYER_OBSTACLE = 2;
-window.LAYER_PLAYER = 3;
-window.LAYER_UI = 4;
+window.LAYER_GROUND = 3;
+window.LAYER_PLAYER = 4;
+window.LAYER_UI = 5;
 
 var State = cc.Enum({
-    READY:  0,
-    PLAY:   1,
-    FINISH: 2 
+	MENU:   0,
+    READY:  1,
+    PLAY:   2,
+    FINISH: 3 
 });
 
 window.State = State;
@@ -34,11 +36,6 @@ cc.Class({
             type: cc.Prefab
         },
 
-        lblTapToPlay: {
-            default: null,
-            type: cc.Node
-        },
-
         lblGameOver: {
             default: null,
             type: cc.Node
@@ -57,7 +54,47 @@ cc.Class({
         lblResultBest: {
             default: null,
             type: cc.Node
-        }
+        },
+		
+		ground1: {
+			default: null,
+			type: cc.Node
+		},
+		
+		ground2: {
+			default: null,
+			type: cc.Node
+		},
+		
+		title: {
+			default: null,
+			type: cc.Node
+		},
+		
+		play: {
+			default: null,
+			type: cc.Node
+		},
+		
+		ready: {
+			default: null,
+			type: cc.Node
+		},
+		
+		hand: {
+			default: null,
+			type: cc.Node
+		},
+		
+		player: {
+			default: null,
+			type: cc.Node
+		},
+		
+		playerTrail: {
+			default: null,
+			type: cc.Node
+		}
     },
 
     // use this for initialization
@@ -88,29 +125,36 @@ cc.Class({
     },
 
     start() {
-        this.lblTapToPlay.y = -SCREEN_HEIGHT * 0.25;
-
         this.lblGameOver.active = false;
         this.lblGameOver.y = SCREEN_HEIGHT * 0.25;
-
-        this.lblScore.y = SCREEN_HEIGHT * 0.25;
+		
+		this.lblScore.active = false;
+        // this.lblScore.y = SCREEN_HEIGHT * 0.3;
 
         this.lblResultScore.active = false;
         this.lblResultScore.y = SCREEN_HEIGHT * 0.15;
 
         this.lblResultBest.active = false;
         this.lblResultBest.y = SCREEN_HEIGHT * 0.05;
+		
+		this.ready.active = false;
+		this.hand.active = false;
 
         this.generateObstacles();
 
         g_scrPlayer.node.zIndex = LAYER_PLAYER;
+		
+		this.ground1.zIndex = LAYER_GROUND;
+		this.ground2.zIndex = LAYER_GROUND;
 
         this.lblScore.zIndex = LAYER_UI;
         this.lblGameOver.zIndex = LAYER_UI;
         this.lblResultScore.zIndex = LAYER_UI;
         this.lblResultBest.zIndex = LAYER_UI;
+		
+		this.playerTrail.active = false;
 
-        this.state = State.READY;
+        this.state = State.MENU;
     },
 
     // called every frame
@@ -125,16 +169,22 @@ cc.Class({
     },
 
     onTouchStart(event) {
-        if (this.state == State.READY) {
-            this.lblTapToPlay.active = false;
-            this.obstacleTop.getComponent(SCR_Obstacle).move();
-            this.obstacleBottom.getComponent(SCR_Obstacle).move();
-            this.obstacleMiddle.getComponent(SCR_Obstacle).move();
-            g_scrPlayer.enableGravity();
-
-            this.state = State.PLAY;
-        }
-
+		if (this.state == State.READY) {
+			this.ready.active = false;
+			this.hand.active = false;
+			this.lblScore.active = true;
+			
+			this.obstacleTop.getComponent(SCR_Obstacle).move();
+			this.obstacleBottom.getComponent(SCR_Obstacle).move();
+			this.obstacleMiddle.getComponent(SCR_Obstacle).move();
+			g_scrPlayer.enableGravity();
+			
+			var move = cc.moveTo(1, -SCREEN_WIDTH * 0.5 + SCREEN_WIDTH * 0.33, g_scrPlayer.node.y).easing(cc.easeSineOut());
+			g_scrPlayer.node.runAction(move);			
+			
+			this.state = State.PLAY;
+		}
+		
         if (this.state == State.PLAY) {
             g_scrPlayer.fly();
         }
@@ -143,6 +193,18 @@ cc.Class({
             cc.director.loadScene("SCN_Gameplay");
         }
     },
+	
+	onPlay() {
+		this.title.active = false;
+		this.play.active = false;
+		this.ready.active = true;
+		this.hand.active = true;
+		
+		var scale = cc.scaleTo(0.5, 0.5, 0.5).easing(cc.easeInOut(3.0));
+		g_scrPlayer.node.runAction(scale);
+		
+		this.state = State.READY;
+	},
 
     generateObstacles() {
         this.obstacleTop = cc.instantiate(this.PFB_OBSTACLE_TOP);

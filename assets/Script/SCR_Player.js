@@ -8,6 +8,9 @@
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/life-cycle-callbacks.html
 
+window.ROTATION_VELOCITY = 50;
+window.ROTATION_ACCELERATION = 150;
+
 cc.Class({
     extends: cc.Component,
 
@@ -40,6 +43,20 @@ cc.Class({
     },
 
     update(dt) {
+		if (g_scrGameplay.state == State.PLAY) {
+			this.rb.angularVelocity += dt * ROTATION_ACCELERATION;
+			
+			var damping = 1000;
+			
+			if (this.node.rotation < -30) {
+				this.rb.angularVelocity += dt * damping;
+			}
+			
+			if (this.node.rotation > 15) {
+				this.node.rotation = 15;
+			}
+		}
+		
         if (this.node.y < -SCREEN_HEIGHT * 0.5) {
             g_scrGameplay.gameOver();
         }
@@ -51,6 +68,7 @@ cc.Class({
 
     fly() {
         this.rb.linearVelocity = cc.v2(0, 1000);
+		this.rb.angularVelocity = -ROTATION_VELOCITY;
     },
 
     onBeginContact(contact, selfCollider, otherCollider) {
