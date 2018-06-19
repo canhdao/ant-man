@@ -75,6 +75,11 @@ cc.Class({
 			default: null,
 			type: cc.Node
 		},
+
+        replay: {
+            default: null,
+            type: cc.Node
+        },
 		
 		ready: {
 			default: null,
@@ -91,8 +96,8 @@ cc.Class({
 			type: cc.Node
 		},
 		
-		playerTrail: {
-			default: null,
+		playerTrails: {
+			default: [],
 			type: cc.Node
 		}
     },
@@ -126,24 +131,15 @@ cc.Class({
 
     start() {
         this.lblGameOver.active = false;
-        this.lblGameOver.y = SCREEN_HEIGHT * 0.25;
-		
 		this.lblScore.active = false;
-        // this.lblScore.y = SCREEN_HEIGHT * 0.3;
-
         this.lblResultScore.active = false;
-        this.lblResultScore.y = SCREEN_HEIGHT * 0.15;
-
         this.lblResultBest.active = false;
-        this.lblResultBest.y = SCREEN_HEIGHT * 0.05;
 		
 		this.ready.active = false;
 		this.hand.active = false;
 
         this.generateObstacles();
 
-        g_scrPlayer.node.zIndex = LAYER_PLAYER;
-		
 		this.ground1.zIndex = LAYER_GROUND;
 		this.ground2.zIndex = LAYER_GROUND;
 
@@ -151,8 +147,18 @@ cc.Class({
         this.lblGameOver.zIndex = LAYER_UI;
         this.lblResultScore.zIndex = LAYER_UI;
         this.lblResultBest.zIndex = LAYER_UI;
+        this.replay.zIndex = LAYER_UI;
+
+        this.player.zIndex = LAYER_PLAYER;
+        this.player.scale = cc.v2(1, 1);
 		
-		this.playerTrail.active = false;
+        for (var i = 0; i < this.playerTrails.length; i++) {
+            this.playerTrails[i].active = false;
+        }
+
+        this.scalingPlayer = false;
+
+        this.replay.active = false;
 
         this.state = State.MENU;
     },
@@ -165,6 +171,20 @@ cc.Class({
             this.obstacleTop.getComponent(SCR_Obstacle).move();
             this.obstacleBottom.getComponent(SCR_Obstacle).move();
             this.obstacleMiddle.getComponent(SCR_Obstacle).move();
+        }
+
+        if (this.scalingPlayer) {
+            for (var i = 0; i < this.playerTrails.length; i++) {
+                if (this.playerTrails[i] != null) {
+                    if (this.player.scaleX <= this.playerTrails[i].scaleX) {
+                        this.playerTrails[i].active = true;
+                        this.playerTrails[i] = null;
+                        if (i == this.playerTrails.length - 1) {
+                            this.scalingPlayer = false;
+                        }
+                    }
+                }
+            }
         }
     },
 
@@ -180,17 +200,13 @@ cc.Class({
 			g_scrPlayer.enableGravity();
 			
 			var move = cc.moveTo(1, -SCREEN_WIDTH * 0.5 + SCREEN_WIDTH * 0.33, g_scrPlayer.node.y).easing(cc.easeSineOut());
-			g_scrPlayer.node.runAction(move);			
+			this.player.runAction(move);			
 			
 			this.state = State.PLAY;
 		}
 		
         if (this.state == State.PLAY) {
             g_scrPlayer.fly();
-        }
-
-        if (this.state == State.FINISH) {
-            cc.director.loadScene("SCN_Gameplay");
         }
     },
 	
@@ -200,11 +216,18 @@ cc.Class({
 		this.ready.active = true;
 		this.hand.active = true;
 		
-		var scale = cc.scaleTo(0.5, 0.5, 0.5).easing(cc.easeInOut(3.0));
-		g_scrPlayer.node.runAction(scale);
+		//var scale = cc.scaleTo(0.5, 0.5, 0.5).easing(cc.easeInOut(3.0));
+        var scale = cc.scaleTo(0.5, 0.5, 0.5).easing(cc.easeElasticOut());
+		this.player.runAction(scale);
+
+        this.scalingPlayer = true;
 		
 		this.state = State.READY;
 	},
+
+    onReplay() {
+        cc.director.loadScene("SCN_Gameplay");
+    },
 
     generateObstacles() {
         this.obstacleTop = cc.instantiate(this.PFB_OBSTACLE_TOP);
@@ -244,9 +267,10 @@ cc.Class({
         this.lblScore.active = false;
         this.lblResultScore.active = true;
         this.lblResultBest.active = true;
+        this.replay.active = true;
 
-        this.lblResultScore.getComponent(cc.Label).string = "Score: " + this.score;
-        this.lblResultBest.getComponent(cc.Label).string = "Best: " + this.best;
+        this.lblResultScore.getComponent(cc.Label).string = "SCORE: " + this.score;
+        this.lblResultBest.getComponent(cc.Label).string = "BEST: " + this.best;
 
         this.state = State.FINISH;
     },
