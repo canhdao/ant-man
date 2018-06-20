@@ -50,7 +50,7 @@ var SCR_Obstacle = cc.Class({
 
     update(dt) {
         // score
-        if (this.position == ObstaclePosition.TOP && !this.passedPlayer && this.node.x < g_scrPlayer.node.x) {
+        if (this.position == ObstaclePosition.TOP && !this.passedPlayer && this.node.x < g_scrGameplay.player.x) {
             g_scrGameplay.increaseScore();
             this.passedPlayer = true;
         }

@@ -11,7 +11,7 @@
 window.ROTATION_VELOCITY = 50;
 window.ROTATION_ACCELERATION = 150;
 
-cc.Class({
+window.SCR_Player = cc.Class({
     extends: cc.Component,
 
     properties: {
@@ -38,8 +38,6 @@ cc.Class({
         this.rb = this.node.getComponent(cc.RigidBody);
         this.rb.fixedRotation = true;
         this.rb.gravityScale = 0;
-
-        window.g_scrPlayer = this;
     },
 
     update(dt) {

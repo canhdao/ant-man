@@ -36,6 +36,11 @@ cc.Class({
             type: cc.Prefab
         },
 
+        uiResult: {
+            default: null,
+            type: cc.Node
+        },
+
         lblGameOver: {
             default: null,
             type: cc.Node
@@ -76,6 +81,16 @@ cc.Class({
 			type: cc.Node
 		},
 
+        leftArrow: {
+            default: null,
+            type: cc.Node
+        },
+
+        rightArrow: {
+            default: null,
+            type: cc.Node
+        },
+
         replay: {
             default: null,
             type: cc.Node
@@ -91,20 +106,35 @@ cc.Class({
 			type: cc.Node
 		},
 		
-		player: {
+		playerAnt: {
 			default: null,
 			type: cc.Node
 		},
 
-        playerFake: {
+        playerAntFake: {
             default: null,
             type: cc.Node
         },
 		
-		playerTrails: {
+		playerAntTrails: {
 			default: [],
 			type: cc.Node
-		}
+		},
+
+        playerWasp: {
+            default: null,
+            type: cc.Node
+        },
+
+        playerWaspFake: {
+            default: null,
+            type: cc.Node
+        },
+
+        playerWaspTrails: {
+            default: [],
+            type: cc.Node
+        }
     },
 
     // use this for initialization
@@ -149,10 +179,12 @@ cc.Class({
 		this.ground2.zIndex = LAYER_GROUND;
 
         this.lblScore.zIndex = LAYER_UI;
-        this.lblGameOver.zIndex = LAYER_UI;
-        this.lblResultScore.zIndex = LAYER_UI;
-        this.lblResultBest.zIndex = LAYER_UI;
-        this.replay.zIndex = LAYER_UI;
+        this.uiResult.zIndex = LAYER_UI;
+        this.uiResult.active = true;
+
+        this.player = this.playerAnt;
+        this.playerFake = this.playerAntFake;
+        this.playerTrails = this.playerAntTrails;
 
         this.player.zIndex = LAYER_PLAYER;
         this.player.scale = cc.v2(1, 1);
@@ -162,8 +194,12 @@ cc.Class({
 
         this.player.x = SCREEN_WIDTH;
 		
-        for (var i = 0; i < this.playerTrails.length; i++) {
-            this.playerTrails[i].active = false;
+        for (var i = 0; i < this.playerAntTrails.length; i++) {
+            this.playerAntTrails[i].active = false;
+        }
+
+        for (var i = 0; i < this.playerWaspTrails.length; i++) {
+            this.playerWaspTrails[i].active = false;
         }
 
         this.scalingPlayer = false;
@@ -207,22 +243,24 @@ cc.Class({
 			this.obstacleTop.getComponent(SCR_Obstacle).move();
 			this.obstacleBottom.getComponent(SCR_Obstacle).move();
 			this.obstacleMiddle.getComponent(SCR_Obstacle).move();
-			g_scrPlayer.enableGravity();
+			this.player.getComponent(SCR_Player).enableGravity();
 			
-			var move = cc.moveTo(1, -SCREEN_WIDTH * 0.5 + SCREEN_WIDTH * 0.33, g_scrPlayer.node.y).easing(cc.easeSineOut());
+			var move = cc.moveTo(1, -SCREEN_WIDTH * 0.5 + SCREEN_WIDTH * 0.33, this.player.y).easing(cc.easeSineOut());
 			this.player.runAction(move);			
 			
 			this.state = State.PLAY;
 		}
 		
         if (this.state == State.PLAY) {
-            g_scrPlayer.fly();
+            this.player.getComponent(SCR_Player).fly();
         }
     },
 	
 	onPlay() {
 		this.title.active = false;
 		this.play.active = false;
+        this.leftArrow.active = false;
+        this.rightArrow.active = false;
 		this.ready.active = true;
 		this.hand.active = true;
 		
@@ -244,6 +282,25 @@ cc.Class({
 
     onReplay() {
         cc.director.loadScene("SCN_Gameplay");
+    },
+
+    onChangeCharacter() {
+        if (this.player == this.playerAnt) {
+            this.player = this.playerWasp;
+            this.playerFake = this.playerWaspFake;
+            this.playerTrails = this.playerWaspTrails;
+
+            this.playerAntFake.x = -1080;
+            this.playerWaspFake.x = 0;
+        }
+        else {
+            this.player = this.playerAnt;
+            this.playerFake = this.playerAntFake;
+            this.playerTrails = this.playerAntTrails;
+
+            this.playerAntFake.x = 0;
+            this.playerWaspFake.x = -1080;
+        }
     },
 
     generateObstacles() {
