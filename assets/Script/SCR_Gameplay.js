@@ -217,7 +217,7 @@ cc.Class({
 		this.hand.active = true;
 		
 		//var scale = cc.scaleTo(0.5, 0.5, 0.5).easing(cc.easeInOut(3.0));
-        var scale = cc.scaleTo(0.5, 0.5, 0.5).easing(cc.easeElasticOut());
+        var scale = cc.scaleTo(0.75, 0.5, 0.5).easing(cc.easeElasticOut());
 		this.player.runAction(scale);
 
         this.scalingPlayer = true;

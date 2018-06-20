@@ -38,7 +38,7 @@ cc.Class({
     },
 
     update (dt) {
-        var speed = 500;
+        var speed = 250;
         this.node.opacity -= dt * speed;
         if (this.node.opacity < 0) {
             this.node.opacity = 0;
