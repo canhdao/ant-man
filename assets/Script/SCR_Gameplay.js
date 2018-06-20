@@ -95,6 +95,11 @@ cc.Class({
 			default: null,
 			type: cc.Node
 		},
+
+        playerFake: {
+            default: null,
+            type: cc.Node
+        },
 		
 		playerTrails: {
 			default: [],
@@ -151,6 +156,11 @@ cc.Class({
 
         this.player.zIndex = LAYER_PLAYER;
         this.player.scale = cc.v2(1, 1);
+
+        this.playerFake.zIndex = LAYER_PLAYER;
+        this.playerFake.scale = cc.v2(1, 1);
+
+        this.player.x = SCREEN_WIDTH;
 		
         for (var i = 0; i < this.playerTrails.length; i++) {
             this.playerTrails[i].active = false;
@@ -176,7 +186,7 @@ cc.Class({
         if (this.scalingPlayer) {
             for (var i = 0; i < this.playerTrails.length; i++) {
                 if (this.playerTrails[i] != null) {
-                    if (this.player.scaleX <= this.playerTrails[i].scaleX) {
+                    if (this.playerFake.scaleX <= this.playerTrails[i].scaleX) {
                         this.playerTrails[i].active = true;
                         this.playerTrails[i] = null;
                         if (i == this.playerTrails.length - 1) {
@@ -216,9 +226,16 @@ cc.Class({
 		this.ready.active = true;
 		this.hand.active = true;
 		
-		//var scale = cc.scaleTo(0.5, 0.5, 0.5).easing(cc.easeInOut(3.0));
-        var scale = cc.scaleTo(0.75, 0.5, 0.5).easing(cc.easeElasticOut());
-		this.player.runAction(scale);
+		var self = this;
+        var activateRealPlayer = function() {
+            self.playerFake.destroy();
+            self.player.scale = self.playerFake.scale;
+            self.player.x = 0;
+        };
+
+        var scale = cc.scaleTo(0.75, 0.5, 0.5).easing(cc.easeElasticOut(0.3));
+        var sequence = cc.sequence(scale, cc.callFunc(activateRealPlayer));
+		this.playerFake.runAction(sequence);
 
         this.scalingPlayer = true;
 		
