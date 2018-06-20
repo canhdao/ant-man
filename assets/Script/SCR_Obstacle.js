@@ -43,7 +43,6 @@ var SCR_Obstacle = cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad() {
-        this.SPEED = 200;
         this.rb = this.node.getComponent(cc.RigidBody);
         this.passedPlayer = false;
     },
@@ -56,7 +55,7 @@ var SCR_Obstacle = cc.Class({
         }
 
         // out of screen
-        if (this.node.x < -SCREEN_WIDTH * 0.5 - this.node.width * 0.5 * this.node.scaleX) {
+        if (this.node.x < -SCREEN_WIDTH * 0.5 - this.node.width * 0.5 * this.node.scaleX - g_scrGameplay.OBSTACLE_DISTANCE) {
             this.node.destroy();
             var index = g_scrGameplay.obstacles.indexOf(this.node);
             g_scrGameplay.obstacles.splice(index, 1);
@@ -64,7 +63,7 @@ var SCR_Obstacle = cc.Class({
     },
 
     move() {
-        this.rb.linearVelocity = cc.v2(-this.SPEED, 0);
+        this.rb.linearVelocity = cc.v2(-OBSTACLE_MOVE_SPEED, 0);
     },
 
     stop() {

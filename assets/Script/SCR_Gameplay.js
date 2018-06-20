@@ -152,8 +152,8 @@ cc.Class({
             self.onTouchStart(event);
         }, this.node);
 
-        this.OBSTACLE_DISTANCE = SCREEN_WIDTH * 0.8;
-        this.OBSTACLE_SPACE = SCREEN_WIDTH * 0.5;
+        this.OBSTACLE_DISTANCE = SCREEN_WIDTH * OBSTACLE_DISTANCE_K;
+        this.OBSTACLE_SPACE = SCREEN_WIDTH * OBSTACLE_SPACE_K;
 
         this.obstacles = [];
 
@@ -173,8 +173,6 @@ cc.Class({
 		this.ready.active = false;
 		this.hand.active = false;
 
-        this.generateObstacles();
-
 		this.ground1.zIndex = LAYER_GROUND;
 		this.ground2.zIndex = LAYER_GROUND;
 
@@ -186,11 +184,17 @@ cc.Class({
         this.playerFake = this.playerAntFake;
         this.playerTrails = this.playerAntTrails;
 
-        this.player.zIndex = LAYER_PLAYER;
-        this.player.scale = cc.v2(1, 1);
+        this.playerAnt.zIndex = LAYER_PLAYER;
+        this.playerAnt.scale = cc.v2(1, 1);
 
-        this.playerFake.zIndex = LAYER_PLAYER;
-        this.playerFake.scale = cc.v2(1, 1);
+        this.playerWasp.zIndex = LAYER_PLAYER;
+        this.playerWasp.scale = cc.v2(1, 1);
+
+        this.playerAntFake.zIndex = LAYER_PLAYER;
+        this.playerAntFake.scale = cc.v2(1, 1);
+
+        this.playerWaspFake.zIndex = LAYER_PLAYER;
+        this.playerWaspFake.scale = cc.v2(1, 1);
 
         this.player.x = SCREEN_WIDTH;
 		
@@ -211,12 +215,14 @@ cc.Class({
 
     // called every frame
     update(dt) {
-        if (this.obstacleTop.x < this.SPAWN_X - this.OBSTACLE_DISTANCE) {
-            this.generateObstacles();
+        if (this.obstacleTop != null) {
+            if (this.obstacleTop.x < this.SPAWN_X - this.OBSTACLE_DISTANCE) {
+                this.generateObstacles();
 
-            this.obstacleTop.getComponent(SCR_Obstacle).move();
-            this.obstacleBottom.getComponent(SCR_Obstacle).move();
-            this.obstacleMiddle.getComponent(SCR_Obstacle).move();
+                this.obstacleTop.getComponent(SCR_Obstacle).move();
+                this.obstacleBottom.getComponent(SCR_Obstacle).move();
+                this.obstacleMiddle.getComponent(SCR_Obstacle).move();
+            }
         }
 
         if (this.scalingPlayer) {
@@ -240,6 +246,8 @@ cc.Class({
 			this.hand.active = false;
 			this.lblScore.active = true;
 			
+            this.generateObstacles();
+
 			this.obstacleTop.getComponent(SCR_Obstacle).move();
 			this.obstacleBottom.getComponent(SCR_Obstacle).move();
 			this.obstacleMiddle.getComponent(SCR_Obstacle).move();
@@ -269,6 +277,13 @@ cc.Class({
             self.playerFake.destroy();
             self.player.scale = self.playerFake.scale;
             self.player.x = 0;
+
+            if (self.player == self.playerAnt) {
+                self.playerWasp.destroy();
+            }
+            else {
+                self.playerAnt.destroy();
+            }
         };
 
         var scale = cc.scaleTo(0.75, 0.5, 0.5).easing(cc.easeElasticOut(0.3));
@@ -310,7 +325,7 @@ cc.Class({
 
         this.SPAWN_X = SCREEN_WIDTH * 0.5 + this.obstacleTop.width * 0.5 * this.obstacleTop.scaleX;
 
-        var refY = Math.random() * SCREEN_HEIGHT * 0.5 - SCREEN_HEIGHT * 0.25;
+        var refY = (Math.random() - 0.5) * SCREEN_WIDTH * OBSTACLE_CENTER_RANDOM_RANGE + this.ground1.height * 0.5;
 
         this.obstacleTop.parent = this.node;
         this.obstacleTop.x = this.SPAWN_X;
