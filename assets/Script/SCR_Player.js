@@ -70,7 +70,9 @@ window.SCR_Player = cc.Class({
     },
 
     onBeginContact(contact, selfCollider, otherCollider) {
-        g_scrGameplay.gameOver();
+        if (otherCollider.body.type != cc.RigidBodyType.Static) {
+            g_scrGameplay.gameOver();
+        }
     }
 });
 
