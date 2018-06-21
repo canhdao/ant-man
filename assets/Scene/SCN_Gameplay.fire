@@ -1655,13 +1655,13 @@
     "body": null,
     "_offset": {
       "__type__": "cc.Vec2",
-      "x": 0,
-      "y": -10
+      "x": 20,
+      "y": 20
     },
     "_size": {
       "__type__": "cc.Size",
-      "width": 320,
-      "height": 500
+      "width": 360,
+      "height": 400
     }
   },
   {
@@ -2090,13 +2090,13 @@
     "body": null,
     "_offset": {
       "__type__": "cc.Vec2",
-      "x": 0,
-      "y": -10
+      "x": 20,
+      "y": -80
     },
     "_size": {
       "__type__": "cc.Size",
-      "width": 320,
-      "height": 500
+      "width": 360,
+      "height": 400
     }
   },
   {
