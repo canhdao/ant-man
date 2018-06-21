@@ -4,7 +4,7 @@
   "_objFlags": 0,
   "_rawFiles": null,
   "_duration": 0.4,
-  "sample": 5,
+  "sample": 10,
   "speed": 1,
   "wrapMode": "2",
   "curveData": {
@@ -18,9 +18,21 @@
             }
           },
           {
-            "frame": 0.2,
+            "frame": 0.1,
             "value": {
               "__uuid__": "7c4dbae4-d1c7-4bc3-af5b-23e36629fab8"
+            }
+          },
+          {
+            "frame": 0.2,
+            "value": {
+              "__uuid__": "850e2012-0364-4df2-8c6e-73a6302f0b8c"
+            }
+          },
+          {
+            "frame": 0.3,
+            "value": {
+              "__uuid__": "74abda3e-fecb-4bd3-a618-a880dd25c0f3"
             }
           }
         ]

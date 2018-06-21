@@ -329,8 +329,8 @@ cc.Class({
         this.lblResultBest.active = true;
         this.replay.active = true;
 
-        this.lblResultScore.getComponent(cc.Label).string = "SCORE: " + this.score;
-        this.lblResultBest.getComponent(cc.Label).string = "BEST: " + this.best;
+        this.lblResultScore.getComponent(cc.Label).string = this.score;
+        this.lblResultBest.getComponent(cc.Label).string = this.best;
 
         this.state = State.FINISH;
     },
