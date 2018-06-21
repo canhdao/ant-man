@@ -110,11 +110,6 @@ cc.Class({
 			default: null,
 			type: cc.Node
 		},
-
-        playerAntFake: {
-            default: null,
-            type: cc.Node
-        },
 		
 		playerAntTrails: {
 			default: [],
@@ -122,11 +117,6 @@ cc.Class({
 		},
 
         playerWasp: {
-            default: null,
-            type: cc.Node
-        },
-
-        playerWaspFake: {
             default: null,
             type: cc.Node
         },
@@ -181,7 +171,6 @@ cc.Class({
         this.uiResult.active = true;
 
         this.player = this.playerAnt;
-        this.playerFake = this.playerAntFake;
         this.playerTrails = this.playerAntTrails;
 
         this.playerAnt.zIndex = LAYER_PLAYER;
@@ -189,14 +178,6 @@ cc.Class({
 
         this.playerWasp.zIndex = LAYER_PLAYER;
         this.playerWasp.scale = cc.v2(1, 1);
-
-        this.playerAntFake.zIndex = LAYER_PLAYER;
-        this.playerAntFake.scale = cc.v2(1, 1);
-
-        this.playerWaspFake.zIndex = LAYER_PLAYER;
-        this.playerWaspFake.scale = cc.v2(1, 1);
-
-        this.player.x = SCREEN_WIDTH;
 		
         for (var i = 0; i < this.playerAntTrails.length; i++) {
             this.playerAntTrails[i].active = false;
@@ -228,7 +209,7 @@ cc.Class({
         if (this.scalingPlayer) {
             for (var i = 0; i < this.playerTrails.length; i++) {
                 if (this.playerTrails[i] != null) {
-                    if (this.playerFake.scaleX <= this.playerTrails[i].scaleX) {
+                    if (this.player.scaleX <= this.playerTrails[i].scaleX) {
                         this.playerTrails[i].active = true;
                         this.playerTrails[i] = null;
                         if (i == this.playerTrails.length - 1) {
@@ -271,26 +252,18 @@ cc.Class({
         this.rightArrow.active = false;
 		this.ready.active = true;
 		this.hand.active = true;
-		
-		var self = this;
-        var activateRealPlayer = function() {
-            self.playerFake.destroy();
-            self.player.scale = self.playerFake.scale;
-            self.player.x = 0;
-
-            if (self.player == self.playerAnt) {
-                self.playerWasp.destroy();
-            }
-            else {
-                self.playerAnt.destroy();
-            }
-        };
 
         var scale = cc.scaleTo(0.75, 0.5, 0.5).easing(cc.easeElasticOut(0.3));
-        var sequence = cc.sequence(scale, cc.callFunc(activateRealPlayer));
-		this.playerFake.runAction(sequence);
+		this.player.runAction(scale);
 
         this.scalingPlayer = true;
+
+        if (this.player == this.playerAnt) {
+            this.playerWasp.destroy();
+        }
+        else {
+            this.playerAnt.destroy();
+        }
 		
 		this.state = State.READY;
 	},
@@ -302,19 +275,17 @@ cc.Class({
     onChangeCharacter() {
         if (this.player == this.playerAnt) {
             this.player = this.playerWasp;
-            this.playerFake = this.playerWaspFake;
             this.playerTrails = this.playerWaspTrails;
 
-            this.playerAntFake.x = -1080;
-            this.playerWaspFake.x = 0;
+            this.playerAnt.x = -1080;
+            this.playerWasp.x = 0;
         }
         else {
             this.player = this.playerAnt;
-            this.playerFake = this.playerAntFake;
             this.playerTrails = this.playerAntTrails;
 
-            this.playerAntFake.x = 0;
-            this.playerWaspFake.x = -1080;
+            this.playerAnt.x = 0;
+            this.playerWasp.x = -1080;
         }
     },
 
