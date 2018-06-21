@@ -323,6 +323,9 @@ cc.Class({
             this.obstacles[i].getComponent(SCR_Obstacle).stop();
         }
 
+        this.ground1.getComponent(SCR_Ground).stop();
+        this.ground2.getComponent(SCR_Ground).stop();
+
         this.lblGameOver.active = true;
         this.lblScore.active = false;
         this.lblResultScore.active = true;
