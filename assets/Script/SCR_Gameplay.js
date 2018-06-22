@@ -296,7 +296,7 @@ cc.Class({
 
         this.SPAWN_X = SCREEN_WIDTH * 0.5 + this.obstacleTop.width * 0.5 * this.obstacleTop.scaleX;
 
-        var refY = (Math.random() - 0.5) * SCREEN_WIDTH * OBSTACLE_CENTER_RANDOM_RANGE + this.ground1.height * 0.5;
+        var refY = (Math.random() - 0.5) * (SCREEN_HEIGHT - this.ground1.height) * OBSTACLE_CENTER_RANDOM_RANGE + this.ground1.height * 0.5;
 
         this.obstacleTop.parent = this.node;
         this.obstacleTop.x = this.SPAWN_X;
