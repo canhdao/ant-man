@@ -124,7 +124,42 @@ cc.Class({
         playerWaspTrails: {
             default: [],
             type: cc.Node
-        }
+        },
+		
+		sndFly: {
+			default: null,
+			url: cc.AudioClip
+		},
+		
+		sndGameOver: {
+			default: null,
+			url: cc.AudioClip
+		},
+		
+		sndGameplay: {
+			default: null,
+			url: cc.AudioClip
+		},
+		
+		sndMainMenu: {
+			default: null,
+			url: cc.AudioClip
+		},
+		
+		sndNext: {
+			default: null,
+			url: cc.AudioClip
+		},
+		
+		sndPowerUp: {
+			default: null,
+			url: cc.AudioClip
+		},
+		
+		sndShrink: {
+			default: null,
+			url: cc.AudioClip
+		}
     },
 
     // use this for initialization
@@ -192,6 +227,7 @@ cc.Class({
         this.replay.active = false;
 
         this.state = State.MENU;
+		this.sndMainMenuID = cc.audioEngine.play(this.sndMainMenu, true);
     },
 
     // called every frame
@@ -238,10 +274,13 @@ cc.Class({
 			this.player.runAction(move);			
 			
 			this.state = State.PLAY;
+			cc.audioEngine.stop(this.sndMainMenuID);
+			this.sndGameplayID = cc.audioEngine.play(this.sndGameplay, true);
 		}
 		
         if (this.state == State.PLAY) {
             this.player.getComponent(SCR_Player).fly();
+			cc.audioEngine.play(this.sndFly);
         }
     },
 	
@@ -266,6 +305,7 @@ cc.Class({
         }
 		
 		this.state = State.READY;
+		cc.audioEngine.play(this.sndShrink);
 	},
 
     onReplay() {
@@ -287,6 +327,7 @@ cc.Class({
             this.playerAnt.x = 0;
             this.playerWasp.x = -1080;
         }
+		cc.audioEngine.play(this.sndNext);
     },
 
     generateObstacles() {
@@ -336,6 +377,10 @@ cc.Class({
         this.lblResultBest.getComponent(cc.Label).string = this.best;
 
         this.state = State.FINISH;
+		cc.audioEngine.stop(this.sndGameplayID);
+		if (this.sndGameOverID == null) {
+			this.sndGameOverID = cc.audioEngine.play(this.sndGameOver);
+		}
     },
 
     increaseScore() {
