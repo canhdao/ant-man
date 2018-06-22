@@ -55,8 +55,13 @@ window.SCR_Player = cc.Class({
 			}
 		}
 		
-        if (this.node.y < -SCREEN_HEIGHT * 0.5) {
+        if (this.node.x >= SCREEN_WIDTH * 0.5 + this.node.width * 0.5 * this.node.scaleX) {
             g_scrGameplay.gameOver();
+        }
+
+        if (this.collidedNode != null) {
+            this.collidedNode.linked1.x = this.collidedNode.x;
+            this.collidedNode.linked2.x = this.collidedNode.x;
         }
     },
 
@@ -70,8 +75,30 @@ window.SCR_Player = cc.Class({
     },
 
     onBeginContact(contact, selfCollider, otherCollider) {
+        if (g_scrGameplay.state == State.PLAY) {
+            if (otherCollider.body.type != cc.RigidBodyType.Static) {
+                g_scrGameplay.stopMoving();
+            }
+
+            if (otherCollider.node.name == "top" || otherCollider.node.name == "bottom") {
+                this.collidedNode = otherCollider.node;
+
+                var scale1 = cc.scaleTo(0.05, 0.95, 0.95).easing(cc.easeSineInOut(0.05));
+                var scale2 = cc.scaleTo(0.1, 1.025, 1.025).easing(cc.easeSineInOut(0.1));
+                var scale3 = cc.scaleTo(0.05, 1, 1).easing(cc.easeSineInOut(0.05));
+                var sequence = cc.sequence(scale1, scale2, scale3);
+
+                otherCollider.node.getComponent(cc.PhysicsBoxCollider).destroy();
+                otherCollider.node.getComponent(cc.RigidBody).destroy();
+                otherCollider.node.runAction(sequence);
+            }
+        }
+    },
+
+    onPostSolve(contact, selfCollider, otherCollider) {
         if (otherCollider.body.type != cc.RigidBodyType.Static) {
-            g_scrGameplay.gameOver();
+            this.rb.linearVelocity = cc.v2(500, 1000);
+            this.rb.angularVelocity = ROTATION_VELOCITY * 2;
         }
     }
 });

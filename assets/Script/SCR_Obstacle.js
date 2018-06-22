@@ -14,7 +14,7 @@ var ObstaclePosition = cc.Enum({
     BOTTOM: 2
 });
 
-var SCR_Obstacle = cc.Class({
+window.SCR_Obstacle = cc.Class({
     extends: cc.Component,
 
     properties: {
@@ -70,5 +70,3 @@ var SCR_Obstacle = cc.Class({
         this.rb.linearVelocity = cc.v2(0, 0);
     }
 });
-
-window.SCR_Obstacle = SCR_Obstacle;

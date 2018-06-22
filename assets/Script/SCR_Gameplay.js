@@ -8,14 +8,13 @@ window.LAYER_GROUND = 3;
 window.LAYER_PLAYER = 4;
 window.LAYER_UI = 5;
 
-var State = cc.Enum({
+window.State = cc.Enum({
 	MENU:   0,
     READY:  1,
     PLAY:   2,
-    FINISH: 3 
+    FALL:   3,
+    FINISH: 4
 });
-
-window.State = State;
 
 cc.Class({
     extends: cc.Component,
@@ -335,6 +334,12 @@ cc.Class({
         this.obstacleBottom = cc.instantiate(this.PFB_OBSTACLE_BOTTOM);
         this.obstacleMiddle = cc.instantiate(this.PFB_OBSTACLE_MIDDLE);
 
+        this.obstacleTop.linked1 = this.obstacleMiddle;
+        this.obstacleTop.linked2 = this.obstacleBottom;
+
+        this.obstacleBottom.linked1 = this.obstacleMiddle;
+        this.obstacleBottom.linked2 = this.obstacleTop;
+
         this.SPAWN_X = SCREEN_WIDTH * 0.5 + this.obstacleTop.width * 0.5 * this.obstacleTop.scaleX;
 
         var refY = (Math.random() - 0.5) * (SCREEN_HEIGHT - this.ground1.height) * OBSTACLE_CENTER_RANDOM_RANGE + this.ground1.height * 0.5;
@@ -359,14 +364,26 @@ cc.Class({
         this.obstacles.push(this.obstacleMiddle);
     },
 
-    gameOver() {
+    stopMoving() {
         for (var i = 0; i < this.obstacles.length; i++) {
             this.obstacles[i].getComponent(SCR_Obstacle).stop();
+            if (this.obstacles[i].getComponent(cc.PhysicsBoxCollider) != null) {
+                this.obstacles[i].getComponent(cc.PhysicsBoxCollider).enabled = false;
+            }
         }
 
         this.ground1.getComponent(SCR_Ground).stop();
         this.ground2.getComponent(SCR_Ground).stop();
 
+        g_scrGameplay.state = State.FALL;
+
+        cc.audioEngine.stop(this.sndGameplayID);
+        if (this.sndGameOverID == null) {
+            this.sndGameOverID = cc.audioEngine.play(this.sndGameOver);
+        }
+    },
+
+    gameOver() {
         this.lblGameOver.active = true;
         this.lblScore.active = false;
         this.lblResultScore.active = true;
@@ -377,10 +394,6 @@ cc.Class({
         this.lblResultBest.getComponent(cc.Label).string = this.best;
 
         this.state = State.FINISH;
-		cc.audioEngine.stop(this.sndGameplayID);
-		if (this.sndGameOverID == null) {
-			this.sndGameOverID = cc.audioEngine.play(this.sndGameOver);
-		}
     },
 
     increaseScore() {
