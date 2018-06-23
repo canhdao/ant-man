@@ -91,6 +91,16 @@ window.SCR_Player = cc.Class({
                 otherCollider.node.getComponent(cc.PhysicsBoxCollider).destroy();
                 otherCollider.node.getComponent(cc.RigidBody).destroy();
                 otherCollider.node.runAction(sequence);
+
+                cc.audioEngine.play(g_scrGameplay.sndImpactWall);
+                this.sndFallingID = cc.audioEngine.play(g_scrGameplay.sndFalling);
+            }
+        }
+
+        if (g_scrGameplay.state == State.PLAY || g_scrGameplay.state == State.FALL) {
+            if (otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
+                if (this.sndFallingID != null) cc.audioEngine.stop(this.sndFallingID);
+                cc.audioEngine.play(g_scrGameplay.sndImpactLand);
             }
         }
     },

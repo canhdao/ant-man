@@ -158,7 +158,22 @@ cc.Class({
 		sndShrink: {
 			default: null,
 			url: cc.AudioClip
-		}
+		},
+
+        sndFalling: {
+            default: null,
+            url: cc.AudioClip
+        },
+
+        sndImpactWall: {
+            default: null,
+            url: cc.AudioClip
+        },
+
+        sndImpactLand: {
+            default: null,
+            url: cc.AudioClip
+        }
     },
 
     // use this for initialization
@@ -186,6 +201,9 @@ cc.Class({
         this.score = 0;
         this.best = cc.sys.localStorage.getItem("best");
         if (this.best == null) this.best = 0;
+
+        this.character = cc.sys.localStorage.getItem("character");
+        if (this.character == null) this.character = "ant";
     },
 
     start() {
@@ -225,19 +243,25 @@ cc.Class({
 
         this.replay.active = false;
 
+        if (this.character == "wasp") {
+            this.onChangeCharacter();
+        }
+
         this.state = State.MENU;
 		this.sndMainMenuID = cc.audioEngine.play(this.sndMainMenu, true);
     },
 
     // called every frame
     update(dt) {
-        if (this.obstacleTop != null) {
-            if (this.obstacleTop.x < this.SPAWN_X - this.OBSTACLE_DISTANCE) {
-                this.generateObstacles();
+        if (this.state == State.PLAY) {
+            if (this.obstacleTop != null) {
+                if (this.obstacleTop.x < this.SPAWN_X - this.OBSTACLE_DISTANCE) {
+                    this.generateObstacles();
 
-                this.obstacleTop.getComponent(SCR_Obstacle).move();
-                this.obstacleBottom.getComponent(SCR_Obstacle).move();
-                this.obstacleMiddle.getComponent(SCR_Obstacle).move();
+                    this.obstacleTop.getComponent(SCR_Obstacle).move();
+                    this.obstacleBottom.getComponent(SCR_Obstacle).move();
+                    this.obstacleMiddle.getComponent(SCR_Obstacle).move();
+                }
             }
         }
 
@@ -318,6 +342,8 @@ cc.Class({
 
             this.playerAnt.x = -1080;
             this.playerWasp.x = 0;
+
+            this.character = "wasp";
         }
         else {
             this.player = this.playerAnt;
@@ -325,8 +351,12 @@ cc.Class({
 
             this.playerAnt.x = 0;
             this.playerWasp.x = -1080;
+
+            this.character = "ant";
         }
+
 		cc.audioEngine.play(this.sndNext);
+        cc.sys.localStorage.setItem("character", this.character);
     },
 
     generateObstacles() {
@@ -378,9 +408,6 @@ cc.Class({
         g_scrGameplay.state = State.FALL;
 
         cc.audioEngine.stop(this.sndGameplayID);
-        if (this.sndGameOverID == null) {
-            this.sndGameOverID = cc.audioEngine.play(this.sndGameOver);
-        }
     },
 
     gameOver() {
@@ -394,6 +421,10 @@ cc.Class({
         this.lblResultBest.getComponent(cc.Label).string = this.best;
 
         this.state = State.FINISH;
+
+        if (this.sndGameOverID == null) {
+            this.sndGameOverID = cc.audioEngine.play(this.sndGameOver);
+        }
     },
 
     increaseScore() {

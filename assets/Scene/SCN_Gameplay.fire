@@ -1670,9 +1670,7 @@
     "node": {
       "__id__": 47
     },
-    "_enabled": true,
-    "obstacleTopFake": null,
-    "obstacleBottomFake": null
+    "_enabled": true
   },
   {
     "__type__": "cc.RigidBody",
@@ -2103,9 +2101,7 @@
     "node": {
       "__id__": 62
     },
-    "_enabled": true,
-    "obstacleTopFake": null,
-    "obstacleBottomFake": null
+    "_enabled": true
   },
   {
     "__type__": "cc.RigidBody",
@@ -3192,6 +3188,15 @@
     },
     "sndShrink": {
       "__uuid__": "e6c8e3bf-3cd3-449e-afc1-2d3b2524fd7e"
+    },
+    "sndFalling": {
+      "__uuid__": "eec13f6c-5535-4f11-a4d2-93042c9bb143"
+    },
+    "sndImpactWall": {
+      "__uuid__": "e57ef336-1120-403f-ae71-0e63d24d611d"
+    },
+    "sndImpactLand": {
+      "__uuid__": "9238126f-af04-4b72-a0a8-09f44e150b15"
     }
   }
 ]
