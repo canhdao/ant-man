@@ -142,6 +142,11 @@ cc.Class({
 			url: cc.AudioClip
 		},
 		
+		sndGameplay_iOS: {
+			default: null,
+			url: cc.AudioClip
+		},
+		
 		sndMainMenu: {
 			default: null,
 			url: cc.AudioClip
@@ -318,7 +323,12 @@ cc.Class({
 			
 			this.state = State.PLAY;
 			cc.audioEngine.stop(this.sndMainMenuID);
-			this.sndGameplayID = cc.audioEngine.play(this.sndGameplay, true);
+			if (cc.sys.os == cc.sys.OS_IOS) {
+				this.sndGameplayID = cc.audioEngine.play(this.sndGameplay_iOS, true);
+			}
+			else {
+				this.sndGameplayID = cc.audioEngine.play(this.sndGameplay, true);
+			}
 		}
 		
         if (this.state == State.PLAY) {
