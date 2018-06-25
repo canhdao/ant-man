@@ -3178,7 +3178,10 @@
       "__uuid__": "bed7f208-c3cc-4f42-a9b8-a798bdc54ab6"
     },
     "sndMainMenu": {
-      "__uuid__": "a3dbd79c-e844-45e3-9d80-7dde3ba5fbd1"
+      "__uuid__": "d22deaf8-0924-4fe0-8c76-98ea49c9c913"
+    },
+    "sndMainMenu_iOS": {
+      "__uuid__": "d22deaf8-0924-4fe0-8c76-98ea49c9c913"
     },
     "sndNext": {
       "__uuid__": "366ba629-c624-4a92-ab80-66ac0a5eb4a6"

@@ -16,6 +16,8 @@ window.State = cc.Enum({
     FINISH: 4
 });
 
+var initializedAdmob = false;
+
 cc.Class({
     extends: cc.Component,
 
@@ -145,6 +147,11 @@ cc.Class({
 			url: cc.AudioClip
 		},
 		
+		sndMainMenu_iOS: {
+			default: null,
+			url: cc.AudioClip
+		},
+		
 		sndNext: {
 			default: null,
 			url: cc.AudioClip
@@ -204,6 +211,13 @@ cc.Class({
 
         this.character = cc.sys.localStorage.getItem("character");
         if (this.character == null) this.character = "ant";
+		
+		if (cc.sys.isNative) {
+			if (!initializedAdmob) {
+				sdkbox.PluginAdMob.init();
+				initializedAdmob = true;
+			}
+		}
     },
 
     start() {
@@ -248,7 +262,13 @@ cc.Class({
         }
 
         this.state = State.MENU;
-		this.sndMainMenuID = cc.audioEngine.play(this.sndMainMenu, true);
+		
+		if (cc.sys.os == cc.sys.OS_IOS) {
+			this.sndMainMenuID = cc.audioEngine.play(this.sndMainMenu_iOS, true);
+		}
+		else {
+			this.sndMainMenuID = cc.audioEngine.play(this.sndMainMenu, true);
+		}
     },
 
     // called every frame
@@ -333,6 +353,9 @@ cc.Class({
 
     onReplay() {
         cc.director.loadScene("SCN_Gameplay");
+		if (cc.sys.isNative) {
+			sdkbox.PluginAdMob.show("gameover");
+		}
     },
 
     onChangeCharacter() {
