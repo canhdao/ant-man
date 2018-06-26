@@ -48,7 +48,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 215,
-      "height": 752
+      "height": 1453
     },
     "_rotationX": 0,
     "_rotationY": 0,
@@ -123,6 +123,9 @@
       "__id__": 1
     },
     "_enabled": true,
+    "PFB_POWER_UP": {
+      "__uuid__": "ffde5415-9c6f-42f3-8c19-8115e2a1d0ee"
+    },
     "position": 1
   },
   {

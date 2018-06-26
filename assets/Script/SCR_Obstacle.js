@@ -33,6 +33,11 @@ window.SCR_Obstacle = cc.Class({
         //         this._bar = value;
         //     }
         // },
+		
+		PFB_POWER_UP: {
+			default: null,
+			type: cc.Prefab
+		},
 
         position: {
             default: ObstaclePosition.TOP,
@@ -45,7 +50,15 @@ window.SCR_Obstacle = cc.Class({
     onLoad() {
         this.rb = this.node.getComponent(cc.RigidBody);
         this.passedPlayer = false;
-    },
+		
+		// power up
+		if (this.position == ObstaclePosition.MIDDLE) {
+			var powerUp = cc.instantiate(this.PFB_POWER_UP);
+			powerUp.position = cc.v2(0, 0);
+			powerUp.parent = this.node;
+			this.powerUp = powerUp;
+		}
+	},
 
     update(dt) {
         // score
@@ -56,9 +69,7 @@ window.SCR_Obstacle = cc.Class({
 
         // out of screen
         if (this.node.x < -SCREEN_WIDTH * 0.5 - this.node.width * 0.5 * this.node.scaleX - g_scrGameplay.OBSTACLE_DISTANCE) {
-            this.node.destroy();
-            var index = g_scrGameplay.obstacles.indexOf(this.node);
-            g_scrGameplay.obstacles.splice(index, 1);
+			this.clean();
         }
     },
 
@@ -68,5 +79,11 @@ window.SCR_Obstacle = cc.Class({
 
     stop() {
         this.rb.linearVelocity = cc.v2(0, 0);
-    }
+    },
+	
+	clean() {
+		this.node.destroy();
+		var index = g_scrGameplay.obstacles.indexOf(this.node);
+		g_scrGameplay.obstacles.splice(index, 1);
+	}
 });

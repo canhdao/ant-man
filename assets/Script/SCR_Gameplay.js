@@ -193,7 +193,7 @@ cc.Class({
         cc.director.getPhysicsManager().enabled = true;
         cc.director.getPhysicsManager().gravity = cc.v2(0, -3000);
         cc.director.getCollisionManager().enabled = true;
-
+		
         SCREEN_WIDTH = this.node.width;
         SCREEN_HEIGHT = this.node.height;
 
@@ -207,7 +207,7 @@ cc.Class({
         this.OBSTACLE_SPACE = SCREEN_WIDTH * OBSTACLE_SPACE_K;
 
         this.obstacles = [];
-
+		
         window.g_scrGameplay= this;
 
         this.score = 0;
@@ -345,8 +345,7 @@ cc.Class({
 		this.ready.active = true;
 		this.hand.active = true;
 
-        var scale = cc.scaleTo(0.75, 0.5, 0.5).easing(cc.easeElasticOut(0.3));
-		this.player.runAction(scale);
+		this.player.getComponent(SCR_Player).shrink();
 
         this.scalingPlayer = true;
 
@@ -426,7 +425,7 @@ cc.Class({
         this.obstacles.push(this.obstacleBottom);
         this.obstacles.push(this.obstacleMiddle);
     },
-
+	
     stopMoving() {
         for (var i = 0; i < this.obstacles.length; i++) {
             this.obstacles[i].getComponent(SCR_Obstacle).stop();
@@ -434,7 +433,7 @@ cc.Class({
                 this.obstacles[i].getComponent(cc.PhysicsBoxCollider).enabled = false;
             }
         }
-
+		
         this.ground1.getComponent(SCR_Ground).stop();
         this.ground2.getComponent(SCR_Ground).stop();
 
