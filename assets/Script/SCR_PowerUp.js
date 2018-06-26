@@ -31,18 +31,12 @@ cc.Class({
 
     // LIFE-CYCLE CALLBACKS:
 
-    update (dt) {
-        if (g_scrGameplay.state != State.FINISH) {
-            if (g_scrGameplay.movingFast) {
-                this.node.x -= BACKGROUND_MOVE_SPEED * POWER_UP_MOVE_SPEED_MULTIPLIER * dt;
-            }
-            else {
-                this.node.x -= BACKGROUND_MOVE_SPEED * dt;
-            }
+    // onLoad () {},
 
-            if (this.node.x <= -this.node.width) {
-                this.node.x += this.node.width * 2;
-            }
-        }
+    start () {
+    },
+
+    update (dt) {
+        this.node.rotation += POWER_UP_ROTATION_SPEED * dt;
     },
 });

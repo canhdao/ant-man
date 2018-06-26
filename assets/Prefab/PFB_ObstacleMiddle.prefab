@@ -25,10 +25,13 @@
       },
       {
         "__id__": 4
+      },
+      {
+        "__id__": 5
       }
     ],
     "_prefab": {
-      "__id__": 5
+      "__id__": 6
     },
     "_id": "",
     "_opacity": 255,
@@ -127,6 +130,26 @@
       "__uuid__": "ffde5415-9c6f-42f3-8c19-8115e2a1d0ee"
     },
     "position": 1
+  },
+  {
+    "__type__": "cc.BoxCollider",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "tag": 0,
+    "_offset": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "_size": {
+      "__type__": "cc.Size",
+      "width": 215,
+      "height": 1453
+    }
   },
   {
     "__type__": "cc.PrefabInfo",

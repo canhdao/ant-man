@@ -77,6 +77,10 @@ window.SCR_Obstacle = cc.Class({
         this.rb.linearVelocity = cc.v2(-OBSTACLE_MOVE_SPEED, 0);
     },
 
+    moveFast() {
+        this.rb.linearVelocity = cc.v2(-OBSTACLE_MOVE_SPEED * POWER_UP_MOVE_SPEED_MULTIPLIER , 0);
+    },
+
     stop() {
         this.rb.linearVelocity = cc.v2(0, 0);
     },

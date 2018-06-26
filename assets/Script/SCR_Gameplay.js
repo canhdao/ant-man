@@ -262,6 +262,8 @@ cc.Class({
 
         this.replay.active = false;
 
+        this.movingFast = false;
+
         if (this.character == "wasp") {
             this.onChangeCharacter();
         }
@@ -283,9 +285,16 @@ cc.Class({
                 if (this.obstacleTop.x < this.SPAWN_X - this.OBSTACLE_DISTANCE) {
                     this.generateObstacles();
 
-                    this.obstacleTop.getComponent(SCR_Obstacle).move();
-                    this.obstacleBottom.getComponent(SCR_Obstacle).move();
-                    this.obstacleMiddle.getComponent(SCR_Obstacle).move();
+                    if (this.movingFast) {
+                        this.obstacleTop.getComponent(SCR_Obstacle).moveFast();
+                        this.obstacleBottom.getComponent(SCR_Obstacle).moveFast();
+                        this.obstacleMiddle.getComponent(SCR_Obstacle).moveFast();
+                    }
+                    else {
+                        this.obstacleTop.getComponent(SCR_Obstacle).move();
+                        this.obstacleBottom.getComponent(SCR_Obstacle).move();
+                        this.obstacleMiddle.getComponent(SCR_Obstacle).move();
+                    }
                 }
             }
         }
@@ -424,6 +433,28 @@ cc.Class({
         this.obstacles.push(this.obstacleTop);
         this.obstacles.push(this.obstacleBottom);
         this.obstacles.push(this.obstacleMiddle);
+    },
+
+    move() {
+        for (var i = 0; i < this.obstacles.length; i++) {
+            this.obstacles[i].getComponent(SCR_Obstacle).move();
+        }
+
+        this.ground1.getComponent(SCR_Ground).move();
+        this.ground2.getComponent(SCR_Ground).move();
+
+        this.movingFast = false;
+    },
+
+    moveFast() {
+        for (var i = 0; i < this.obstacles.length; i++) {
+            this.obstacles[i].getComponent(SCR_Obstacle).moveFast();
+        }
+
+        this.ground1.getComponent(SCR_Ground).moveFast();
+        this.ground2.getComponent(SCR_Ground).moveFast();
+
+        this.movingFast = true;
     },
 	
     stopMoving() {

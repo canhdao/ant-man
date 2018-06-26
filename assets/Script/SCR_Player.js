@@ -45,6 +45,10 @@ window.SCR_Player = cc.Class({
         this.rb.gravityScale = 0;
 		this.state = PlayerState.BIG;
 		this.bigCountDown = 0;
+
+        var collider = this.node.getComponent(cc.PhysicsCircleCollider);
+        this.colliderOffset = collider.offset;
+        this.colliderRadius = collider.radius;
     },
 
     update(dt) {
@@ -96,7 +100,7 @@ window.SCR_Player = cc.Class({
 		var scale = cc.scaleTo(0.75, 1.0, 1.0).easing(cc.easeElasticOut(0.3));
 		this.node.runAction(scale);
 		this.state = PlayerState.BIG;
-		this.bigCountDown = BIG_DURATION;
+		this.bigCountDown = POWER_UP_DURATION;
 	},
 	
 	shrink() {
@@ -114,18 +118,13 @@ window.SCR_Player = cc.Class({
 	},
 	
 	addPhysics() {
-		this.node.addComponent(cc.RigidBody);
-		this.node.addComponent(cc.PhysicsCircleCollider);
-		
-		var rb = this.node.getComponent(cc.RigidBody);
-		console.log(rb);
-		rb.type = cc.RigidBodyType.Dynamic;
-		console.log(rb.enabledContactListener);
-		rb.enabledContactListener = true;
-		console.log(rb.enabledContactListener);
-		
-		var collider = this.node.getComponent(cc.PhysicsCircleCollider);
-		collider.radius = 220;
+		this.rb = this.node.addComponent(cc.RigidBody);
+		this.rb.type = cc.RigidBodyType.Dynamic;
+		this.rb.enabledContactListener = true;
+
+		var collider = this.node.addComponent(cc.PhysicsCircleCollider);
+        collider.offset = this.colliderOffset;
+		collider.radius = this.colliderRadius;
 	},
 	
 	onCollisionEnter: function (otherCollider, selfCollider) {
@@ -140,10 +139,18 @@ window.SCR_Player = cc.Class({
 					this.node.getComponent(SCR_Player).rb.angularVelocity = 0;
 					this.node.rotation = 0;
 					
-					selfCollider.destroy();
+                    this.node.getComponent(cc.PhysicsCircleCollider).destroy();
 					this.node.getComponent(cc.RigidBody).destroy();
+
+                    g_scrGameplay.moveFast();
 				}
 			}
+
+            if (this.state == PlayerState.BIG) {
+                if (otherCollider.node.name == "top"/* || otherCollider.node.name == "middle"*/ || otherCollider.node.name == "bottom") {
+                    otherCollider.node.getComponent(cc.RigidBody).type = cc.RigidBodyType.Dynamic;
+                }
+            }
 		}
 	},
 
@@ -183,7 +190,7 @@ window.SCR_Player = cc.Class({
 		if (this.state == PlayerState.BIG) {
 			if (otherCollider.node.name == "top" || otherCollider.node.name == "bottom") {
 				//otherCollider.node.getComponent(SCR_Obstacle).clean();
-				otherCollider.node.getComponent(cc.PhysicsBoxCollider).destroy();
+				//otherCollider.node.getComponent(cc.PhysicsBoxCollider).destroy();
 				//otherCollider.node.getComponent(cc.RigidBody).destroy();
 			}
 		}

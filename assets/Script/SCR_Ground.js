@@ -44,5 +44,13 @@ window.SCR_Ground = cc.Class({
 
     stop() {
         this.rb.linearVelocity = cc.v2(0, 0);
+    },
+
+    move() {
+        this.rb.linearVelocity = cc.v2(-OBSTACLE_MOVE_SPEED, 0);
+    },
+
+    moveFast() {
+        this.rb.linearVelocity = cc.v2(-OBSTACLE_MOVE_SPEED * POWER_UP_MOVE_SPEED_MULTIPLIER , 0);
     }
 });
