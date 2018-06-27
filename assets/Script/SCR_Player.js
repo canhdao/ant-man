@@ -12,8 +12,10 @@ window.ROTATION_VELOCITY = 50;
 window.ROTATION_ACCELERATION = 150;
 
 window.PlayerState = cc.Enum({
-	BIG:   0,
-	SMALL: 1
+	BIG:       0,
+	SMALL:     1,
+    ENLARGING: 2,
+    SHRINKING: 3
 });
 
 window.SCR_Player = cc.Class({
@@ -68,7 +70,7 @@ window.SCR_Player = cc.Class({
 			}
 			
 			if (this.state == PlayerState.BIG) {
-				if (this.bigCountDown >= 0) {
+				if (this.bigCountDown > 0) {
 					this.bigCountDown -= dt;
 				}
 				else {
@@ -97,25 +99,42 @@ window.SCR_Player = cc.Class({
     },
 	
 	enlarge() {
+        this.bigCountDown = POWER_UP_DURATION;
+
 		var scale = cc.scaleTo(0.75, 1.0, 1.0).easing(cc.easeElasticOut(0.3));
-		this.node.runAction(scale);
-		this.state = PlayerState.BIG;
-		this.bigCountDown = POWER_UP_DURATION;
+		this.state = PlayerState.ENLARGING;
+
+        var setBig = cc.callFunc(this.setBig, this);
+        var sequence = cc.sequence(scale, setBig);
+
+        this.node.runAction(sequence);
 	},
 	
 	shrink() {
         var scale = cc.scaleTo(0.75, 0.5, 0.5).easing(cc.easeElasticOut(0.3));
-		this.state = PlayerState.SMALL;
+		this.state = PlayerState.SHRINKING;
 		
+        var setSmall = cc.callFunc(this.setSmall, this);
+        var addPhysics = cc.callFunc(this.addPhysics, this);
+        var sequence = null;
+
 		if (this.node.getComponent(cc.RigidBody) == null) {
-			var callFunc = cc.callFunc(this.addPhysics, this);
-			var sequence = cc.sequence(scale, callFunc);
-			this.node.runAction(sequence);
+			sequence = cc.sequence(scale, addPhysics, setSmall);
 		}
 		else {
-			this.node.runAction(scale);
+            sequence = cc.sequence(scale, setSmall);
 		}
+
+        this.node.runAction(sequence);
 	},
+
+    setBig() {
+        this.state = PlayerState.BIG;
+    },
+
+    setSmall() {
+        this.state = PlayerState.SMALL;
+    },
 	
 	addPhysics() {
 		this.rb = this.node.addComponent(cc.RigidBody);
@@ -148,7 +167,7 @@ window.SCR_Player = cc.Class({
 
             if (this.state == PlayerState.BIG) {
                 if (otherCollider.node.name == "top"/* || otherCollider.node.name == "middle"*/ || otherCollider.node.name == "bottom") {
-                    otherCollider.node.getComponent(cc.RigidBody).type = cc.RigidBodyType.Dynamic;
+                    //otherCollider.node.getComponent(cc.RigidBody).type = cc.RigidBodyType.Dynamic;
                 }
             }
 		}

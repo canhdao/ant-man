@@ -268,6 +268,8 @@ cc.Class({
             this.onChangeCharacter();
         }
 
+        this.pendingGenerateObstacles = false;
+
         this.state = State.MENU;
 		
 		if (cc.sys.os == cc.sys.OS_IOS) {
@@ -282,20 +284,37 @@ cc.Class({
     update(dt) {
         if (this.state == State.PLAY) {
             if (this.obstacleTop != null) {
-                if (this.obstacleTop.x < this.SPAWN_X - this.OBSTACLE_DISTANCE) {
-                    this.generateObstacles();
+                if (this.obstacleTop.x < this.SPAWN_X - this.OBSTACLE_DISTANCE && !this.pendingGenerateObstacles) {
+                    if (this.player.getComponent(SCR_Player).bigCountDown >= 1 || this.player.getComponent(SCR_Player).bigCountDown <= 0) {
+                        this.generateObstacles();
 
-                    if (this.movingFast) {
-                        this.obstacleTop.getComponent(SCR_Obstacle).moveFast();
-                        this.obstacleBottom.getComponent(SCR_Obstacle).moveFast();
-                        this.obstacleMiddle.getComponent(SCR_Obstacle).moveFast();
+                        if (this.movingFast) {
+                            this.obstacleTop.getComponent(SCR_Obstacle).moveFast();
+                            this.obstacleBottom.getComponent(SCR_Obstacle).moveFast();
+                            this.obstacleMiddle.getComponent(SCR_Obstacle).moveFast();
+                        }
+                        else {
+                            this.obstacleTop.getComponent(SCR_Obstacle).move();
+                            this.obstacleBottom.getComponent(SCR_Obstacle).move();
+                            this.obstacleMiddle.getComponent(SCR_Obstacle).move();
+                        }
                     }
                     else {
-                        this.obstacleTop.getComponent(SCR_Obstacle).move();
-                        this.obstacleBottom.getComponent(SCR_Obstacle).move();
-                        this.obstacleMiddle.getComponent(SCR_Obstacle).move();
+                        this.pendingGenerateObstacles = true;
                     }
                 }
+            }
+
+            if (this.pendingGenerateObstacles && this.player.getComponent(SCR_Player).state == PlayerState.SMALL) {
+                this.generateObstacles();
+
+                this.obstacleTop.getComponent(SCR_Obstacle).move();
+                this.obstacleBottom.getComponent(SCR_Obstacle).move();
+                this.obstacleMiddle.getComponent(SCR_Obstacle).move();
+
+                this.movingFast = false;
+
+                this.pendingGenerateObstacles = false;
             }
         }
 

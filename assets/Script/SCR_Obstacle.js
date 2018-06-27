@@ -52,11 +52,14 @@ window.SCR_Obstacle = cc.Class({
         this.passedPlayer = false;
 		
 		// power up
-		if (this.position == ObstaclePosition.MIDDLE) {
-			var powerUp = cc.instantiate(this.PFB_POWER_UP);
-			powerUp.position = cc.v2(0, 0);
-			powerUp.parent = this.node;
-			this.powerUp = powerUp;
+		if (this.position == ObstaclePosition.MIDDLE && g_scrGameplay.player.getComponent(SCR_Player).state == PlayerState.SMALL) {
+            var r = Math.random();
+            if (r <= POWER_UP_RATE) {
+    			var powerUp = cc.instantiate(this.PFB_POWER_UP);
+    			powerUp.position = cc.v2(0, 0);
+    			powerUp.parent = this.node;
+    			this.powerUp = powerUp;
+            }
 		}
 	},
 
@@ -89,5 +92,8 @@ window.SCR_Obstacle = cc.Class({
 		this.node.destroy();
 		var index = g_scrGameplay.obstacles.indexOf(this.node);
 		g_scrGameplay.obstacles.splice(index, 1);
+        if (g_scrGameplay.obstacleTop == this.node) {
+            g_scrGameplay.obstacleTop = null;
+        }
 	}
 });
