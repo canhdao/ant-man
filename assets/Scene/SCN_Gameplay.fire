@@ -3136,6 +3136,15 @@
     "PFB_OBSTACLE_BOTTOM": {
       "__uuid__": "1257b410-0ab2-4852-9121-eed10f9c6319"
     },
+    "PFB_OBSTACLE_TOP_FAKE": {
+      "__uuid__": "bbbad6ee-6755-4bf3-896a-0b5b4c47d9a0"
+    },
+    "PFB_OBSTACLE_MIDDLE_FAKE": {
+      "__uuid__": "335f4e17-dfb6-4fb6-841b-c722c8090ebf"
+    },
+    "PFB_OBSTACLE_BOTTOM_FAKE": {
+      "__uuid__": "08c96fd2-3a64-4241-8ee8-2b1addabae85"
+    },
     "uiResult": {
       "__id__": 70
     },

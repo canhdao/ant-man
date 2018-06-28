@@ -145,8 +145,60 @@ window.SCR_Player = cc.Class({
         collider.offset = this.colliderOffset;
 		collider.radius = this.colliderRadius;
 	},
+
+    generateFakeTop(top) {
+        var obstacle = cc.instantiate(g_scrGameplay.PFB_OBSTACLE_TOP_FAKE);
+        obstacle.zIndex = LAYER_OBSTACLE;
+
+        var b = top.y - top.height * top.scaleY * 0.5;
+
+        var h = SCREEN_HEIGHT * 0.5 - b;
+
+        var sprite = obstacle.getComponent(cc.Sprite);
+        sprite.fillRange = h / (obstacle.height * obstacle.scaleY);
+        sprite.fillStart = 0;
+
+        obstacle.parent = this.node.parent;
+        obstacle.position = top.position;
+    },
+
+    generateFakeBottom(bottom) {
+        var obstacle = cc.instantiate(g_scrGameplay.PFB_OBSTACLE_BOTTOM_FAKE);
+        obstacle.zIndex = LAYER_OBSTACLE;
+
+        var t = bottom.y + bottom.height * bottom.scaleY * 0.5;
+
+        var h = SCREEN_HEIGHT * 0.5 + t - g_scrGameplay.ground1.height * g_scrGameplay.ground1.scaleY;
+
+        var sprite = obstacle.getComponent(cc.Sprite);
+        sprite.fillRange = h / (obstacle.height * obstacle.scaleY);
+        sprite.fillStart = 1 - sprite.fillRange;
+
+        obstacle.parent = this.node.parent;
+        obstacle.position = bottom.position;
+    },
+
+    generateFakeMiddle(middle) {
+        var obstacle = cc.instantiate(g_scrGameplay.PFB_OBSTACLE_MIDDLE_FAKE);
+        obstacle.zIndex = LAYER_OBSTACLE_MIDDLE;
+
+        var top = middle.linked1;
+        var t = top.y - top.height * top.scaleY * 0.5;
+
+        var bottom = middle.linked2;
+        var b = bottom.y + bottom.height * bottom.scaleY * 0.5;
+
+        var h = t - b;
+
+        var sprite = obstacle.getComponent(cc.Sprite);
+        sprite.fillRange = h / (obstacle.height * obstacle.scaleY);
+        sprite.fillStart = (1 - sprite.fillRange) * 0.5;
+
+        obstacle.parent = this.node.parent;
+        obstacle.position = middle.position;
+    },
 	
-	onCollisionEnter: function (otherCollider, selfCollider) {
+	onCollisionEnter(otherCollider, selfCollider) {
         if (g_scrGameplay.state == State.PLAY) {
 			if (otherCollider.node.name == "PowerUp") {
 				otherCollider.node.destroy();
@@ -165,9 +217,20 @@ window.SCR_Player = cc.Class({
 				}
 			}
 
-            if (this.state == PlayerState.BIG) {
-                if (otherCollider.node.name == "top"/* || otherCollider.node.name == "middle"*/ || otherCollider.node.name == "bottom") {
-                    //otherCollider.node.getComponent(cc.RigidBody).type = cc.RigidBodyType.Dynamic;
+            if (this.state == PlayerState.BIG || this.state == PlayerState.ENLARGING) {
+                if (otherCollider.node.name == "top" || otherCollider.node.name == "bottom") {
+                    otherCollider.node.getComponent(cc.Sprite).enabled = false;
+                    otherCollider.node.linked1.getComponent(cc.Sprite).enabled = false;
+
+                    if (otherCollider.node.name == "top") {
+                        this.generateFakeTop(otherCollider.node);
+                        this.generateFakeMiddle(otherCollider.node.linked1);
+                    }
+
+                    if (otherCollider.node.name == "bottom") {
+                        this.generateFakeBottom(otherCollider.node);
+                        this.generateFakeMiddle(otherCollider.node.linked1);
+                    }
                 }
             }
 		}
@@ -203,14 +266,6 @@ window.SCR_Player = cc.Class({
 					if (this.sndFallingID != null) cc.audioEngine.stop(this.sndFallingID);
 					cc.audioEngine.play(g_scrGameplay.sndImpactLand);
 				}
-			}
-		}
-		
-		if (this.state == PlayerState.BIG) {
-			if (otherCollider.node.name == "top" || otherCollider.node.name == "bottom") {
-				//otherCollider.node.getComponent(SCR_Obstacle).clean();
-				//otherCollider.node.getComponent(cc.PhysicsBoxCollider).destroy();
-				//otherCollider.node.getComponent(cc.RigidBody).destroy();
 			}
 		}
     },

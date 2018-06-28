@@ -37,6 +37,21 @@ cc.Class({
             type: cc.Prefab
         },
 
+        PFB_OBSTACLE_TOP_FAKE: {
+            default: null,
+            type: cc.Prefab
+        },
+        
+        PFB_OBSTACLE_MIDDLE_FAKE: {
+            default: null,
+            type: cc.Prefab
+        },
+
+        PFB_OBSTACLE_BOTTOM_FAKE: {
+            default: null,
+            type: cc.Prefab
+        },
+
         uiResult: {
             default: null,
             type: cc.Node
@@ -429,6 +444,9 @@ cc.Class({
 
         this.obstacleBottom.linked1 = this.obstacleMiddle;
         this.obstacleBottom.linked2 = this.obstacleTop;
+
+        this.obstacleMiddle.linked1 = this.obstacleTop;
+        this.obstacleMiddle.linked2 = this.obstacleBottom;
 
         this.SPAWN_X = SCREEN_WIDTH * 0.5 + this.obstacleTop.width * 0.5 * this.obstacleTop.scaleX;
 
