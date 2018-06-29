@@ -147,41 +147,74 @@ window.SCR_Player = cc.Class({
 	},
 
     generateFakeTop(top) {
-        var obstacle = cc.instantiate(g_scrGameplay.PFB_OBSTACLE_TOP_FAKE);
-        obstacle.zIndex = LAYER_OBSTACLE;
-
         var b = top.y - top.height * top.scaleY * 0.5;
-
         var h = SCREEN_HEIGHT * 0.5 - b;
+        var w = top.width * top.scaleX;
 
-        var sprite = obstacle.getComponent(cc.Sprite);
-        sprite.fillRange = h / (obstacle.height * obstacle.scaleY);
-        sprite.fillStart = 0;
+        if (h <= w) {
+            var obstacle = cc.instantiate(g_scrGameplay.PFB_OBSTACLE_TOP_FAKE);
+            obstacle.zIndex = LAYER_OBSTACLE;
 
-        obstacle.parent = this.node.parent;
-        obstacle.position = top.position;
+            var sprite = obstacle.getComponent(cc.Sprite);
+            sprite.fillRange = h / (obstacle.height * obstacle.scaleY);
+            sprite.fillStart = 0;
+
+            obstacle.parent = this.node.parent;
+            obstacle.position = top.position;
+        }
+        else {
+            var n = Math.ceil(h / w);
+            for (var i = 0; i < n; i++) {
+                var obstacle = cc.instantiate(g_scrGameplay.PFB_OBSTACLE_TOP_FAKE);
+                obstacle.zIndex = LAYER_OBSTACLE;
+
+                var sprite = obstacle.getComponent(cc.Sprite);
+                sprite.fillRange = w / (obstacle.height * obstacle.scaleY);
+                sprite.fillStart = i * w / (obstacle.height * obstacle.scaleY);
+
+                obstacle.anchorY = sprite.fillStart + sprite.fillRange * 0.5;
+
+                obstacle.parent = this.node.parent;
+                obstacle.position = cc.v2(top.position.x, b + (i + 0.5) * w);
+            }
+        }
     },
 
     generateFakeBottom(bottom) {
-        var obstacle = cc.instantiate(g_scrGameplay.PFB_OBSTACLE_BOTTOM_FAKE);
-        obstacle.zIndex = LAYER_OBSTACLE;
-
         var t = bottom.y + bottom.height * bottom.scaleY * 0.5;
-
         var h = SCREEN_HEIGHT * 0.5 + t - g_scrGameplay.ground1.height * g_scrGameplay.ground1.scaleY;
+        var w = bottom.width * bottom.scaleX;
 
-        var sprite = obstacle.getComponent(cc.Sprite);
-        sprite.fillRange = h / (obstacle.height * obstacle.scaleY);
-        sprite.fillStart = 1 - sprite.fillRange;
+        if (h <= w) {
+            var obstacle = cc.instantiate(g_scrGameplay.PFB_OBSTACLE_BOTTOM_FAKE);
+            obstacle.zIndex = LAYER_OBSTACLE;
 
-        obstacle.parent = this.node.parent;
-        obstacle.position = bottom.position;
+            var sprite = obstacle.getComponent(cc.Sprite);
+            sprite.fillRange = h / (obstacle.height * obstacle.scaleY);
+            sprite.fillStart = 1 - sprite.fillRange;
+
+            obstacle.parent = this.node.parent;
+            obstacle.position = bottom.position;
+        }
+        else {
+            var n = Math.ceil(h / w);
+            for (var i = 0; i < n; i++) {
+                var obstacle = cc.instantiate(g_scrGameplay.PFB_OBSTACLE_BOTTOM_FAKE);
+                obstacle.zIndex = LAYER_OBSTACLE;
+
+                var sprite = obstacle.getComponent(cc.Sprite);
+                sprite.fillRange = w / (obstacle.height * obstacle.scaleY);
+                sprite.fillStart = 1 - sprite.fillRange - i * w / (obstacle.height * obstacle.scaleY);
+
+                obstacle.anchorY = sprite.fillStart + sprite.fillRange * 0.5;
+
+                obstacle.parent = this.node.parent;
+                obstacle.position = cc.v2(bottom.position.x, t - (i + 0.5) * w);
+            }
+        }
     },
 
     generateFakeMiddle(middle) {
-        var obstacle = cc.instantiate(g_scrGameplay.PFB_OBSTACLE_MIDDLE_FAKE);
-        obstacle.zIndex = LAYER_OBSTACLE_MIDDLE;
-
         var top = middle.linked1;
         var t = top.y - top.height * top.scaleY * 0.5;
 
@@ -189,13 +222,37 @@ window.SCR_Player = cc.Class({
         var b = bottom.y + bottom.height * bottom.scaleY * 0.5;
 
         var h = t - b;
+        var w = middle.width * middle.scaleX;
 
-        var sprite = obstacle.getComponent(cc.Sprite);
-        sprite.fillRange = h / (obstacle.height * obstacle.scaleY);
-        sprite.fillStart = (1 - sprite.fillRange) * 0.5;
+        if (h <= w) {
+            var obstacle = cc.instantiate(g_scrGameplay.PFB_OBSTACLE_MIDDLE_FAKE);
+            obstacle.zIndex = LAYER_OBSTACLE_MIDDLE;
 
-        obstacle.parent = this.node.parent;
-        obstacle.position = middle.position;
+            var sprite = obstacle.getComponent(cc.Sprite);
+            sprite.fillRange = h / (obstacle.height * obstacle.scaleY);
+            sprite.fillStart = (1 - sprite.fillRange) * 0.5;
+
+            obstacle.parent = this.node.parent;
+            obstacle.position = middle.position;
+        }
+        else {
+            var n = Math.ceil(h / w);
+            for (var i = 0; i < n; i++) {
+                var obstacle = cc.instantiate(g_scrGameplay.PFB_OBSTACLE_MIDDLE_FAKE);
+                obstacle.zIndex = LAYER_OBSTACLE_MIDDLE;
+
+                var sprite = obstacle.getComponent(cc.Sprite);
+                sprite.fillRange = w / (obstacle.height * obstacle.scaleY);
+                var totalFillRange = sprite.fillRange * n;
+                sprite.fillStart = i * w / (obstacle.height * obstacle.scaleY) + (1 - totalFillRange) * 0.5;
+
+                obstacle.anchorY = sprite.fillStart + sprite.fillRange * 0.5;
+
+                obstacle.parent = this.node.parent;
+                var totalHeight = w * n;
+                obstacle.position = cc.v2(middle.position.x, middle.position.y + i * w - totalHeight * 0.5);
+            }
+        }
     },
 	
 	onCollisionEnter(otherCollider, selfCollider) {

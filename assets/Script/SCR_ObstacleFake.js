@@ -8,6 +8,10 @@
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/life-cycle-callbacks.html
 
+window.randomRange = function(min, max) {
+    return Math.random() * (max - min) + min;
+};
+
 cc.Class({
     extends: cc.Component,
 
@@ -33,9 +37,18 @@ cc.Class({
 
     // onLoad () {},
 
-    start () {
-        this.getComponent(cc.RigidBody).linearVelocity = cc.v2(500, 1000);
-        this.getComponent(cc.RigidBody).angularVelocity = (Math.random() - 0.5) * 100;
+    start() {
+        var dx = this.node.x - g_scrGameplay.player.x;
+        var dy = this.node.y - g_scrGameplay.player.y;
+
+        this.getComponent(cc.RigidBody).linearVelocity = cc.v2(300000000 / (dx * dx + dy * dy), dy * randomRange(2, 3));
+
+        if (this.node.y > g_scrGameplay.player.y) {
+            this.getComponent(cc.RigidBody).angularVelocity = randomRange(-500, -300);
+        }
+        else {
+            this.getComponent(cc.RigidBody).angularVelocity = randomRange(300, 500);
+        }
     },
 
     // update (dt) {},
