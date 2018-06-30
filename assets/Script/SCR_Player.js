@@ -255,6 +255,9 @@ window.SCR_Player = cc.Class({
         if (otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
             this.rb.linearVelocity = cc.v2(500, 1000);
             this.rb.angularVelocity = ROTATION_VELOCITY * 2;
+            
+            if (this.sndFallingID != null) cc.audioEngine.stop(this.sndFallingID);
+            cc.audioEngine.play(g_scrGameplay.sndImpactLand);
         }
 	},
 
