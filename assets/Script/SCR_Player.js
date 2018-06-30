@@ -55,18 +55,16 @@ window.SCR_Player = cc.Class({
 
     update(dt) {
 		if (g_scrGameplay.state == State.PLAY) {
-			if (this.state == PlayerState.SMALL) {
-				this.rb.angularVelocity += dt * ROTATION_ACCELERATION;
-				
-				var damping = 1000;
-				
-				if (this.node.rotation < -30) {
-					this.rb.angularVelocity += dt * damping;
-				}
-				
-				if (this.node.rotation > 15) {
-					this.node.rotation = 15;
-				}
+			this.rb.angularVelocity += dt * ROTATION_ACCELERATION;
+			
+			var damping = 1000;
+			
+			if (this.node.rotation < -30) {
+				this.rb.angularVelocity += dt * damping;
+			}
+			
+			if (this.node.rotation > 15) {
+				this.node.rotation = 15;
 			}
 			
 			if (this.state == PlayerState.BIG) {
@@ -77,6 +75,8 @@ window.SCR_Player = cc.Class({
 					this.shrink();
 				}
 			}
+
+            if (this.node.y > SCREEN_HEIGHT * 0.5 - this.colliderRadius * this.node.scaleX) this.node.y = SCREEN_HEIGHT * 0.5 - this.colliderRadius * this.node.scaleX;
 		}
 		
         if (this.node.x >= SCREEN_WIDTH * 0.5 + this.node.width * 0.5 * this.node.scaleX) {
@@ -118,7 +118,7 @@ window.SCR_Player = cc.Class({
         var addPhysics = cc.callFunc(this.addPhysics, this);
         var sequence = null;
 
-		if (this.node.getComponent(cc.RigidBody) == null) {
+		if (this.node.getComponent(cc.PhysicsCircleCollider) == null) {
 			sequence = cc.sequence(scale, addPhysics, setSmall);
 		}
 		else {
@@ -137,6 +137,8 @@ window.SCR_Player = cc.Class({
     },
 	
 	addPhysics() {
+        this.rb.destroy();
+
 		this.rb = this.node.addComponent(cc.RigidBody);
 		this.rb.type = cc.RigidBodyType.Dynamic;
 		this.rb.enabledContactListener = true;
@@ -151,32 +153,19 @@ window.SCR_Player = cc.Class({
         var h = SCREEN_HEIGHT * 0.5 - b;
         var w = top.width * top.scaleX;
 
-        if (h <= w) {
+        var n = Math.ceil(h / w);
+        for (var i = 0; i < n; i++) {
             var obstacle = cc.instantiate(g_scrGameplay.PFB_OBSTACLE_TOP_FAKE);
             obstacle.zIndex = LAYER_OBSTACLE;
 
             var sprite = obstacle.getComponent(cc.Sprite);
-            sprite.fillRange = h / (obstacle.height * obstacle.scaleY);
-            sprite.fillStart = 0;
+            sprite.fillRange = w / (obstacle.height * obstacle.scaleY);
+            sprite.fillStart = i * w / (obstacle.height * obstacle.scaleY);
+
+            obstacle.anchorY = sprite.fillStart + sprite.fillRange * 0.5;
 
             obstacle.parent = this.node.parent;
-            obstacle.position = top.position;
-        }
-        else {
-            var n = Math.ceil(h / w);
-            for (var i = 0; i < n; i++) {
-                var obstacle = cc.instantiate(g_scrGameplay.PFB_OBSTACLE_TOP_FAKE);
-                obstacle.zIndex = LAYER_OBSTACLE;
-
-                var sprite = obstacle.getComponent(cc.Sprite);
-                sprite.fillRange = w / (obstacle.height * obstacle.scaleY);
-                sprite.fillStart = i * w / (obstacle.height * obstacle.scaleY);
-
-                obstacle.anchorY = sprite.fillStart + sprite.fillRange * 0.5;
-
-                obstacle.parent = this.node.parent;
-                obstacle.position = cc.v2(top.position.x, b + (i + 0.5) * w);
-            }
+            obstacle.position = cc.v2(top.position.x, b + (i + 0.5) * w);
         }
     },
 
@@ -185,32 +174,19 @@ window.SCR_Player = cc.Class({
         var h = SCREEN_HEIGHT * 0.5 + t - g_scrGameplay.ground1.height * g_scrGameplay.ground1.scaleY;
         var w = bottom.width * bottom.scaleX;
 
-        if (h <= w) {
+        var n = Math.ceil(h / w);
+        for (var i = 0; i < n; i++) {
             var obstacle = cc.instantiate(g_scrGameplay.PFB_OBSTACLE_BOTTOM_FAKE);
             obstacle.zIndex = LAYER_OBSTACLE;
 
             var sprite = obstacle.getComponent(cc.Sprite);
-            sprite.fillRange = h / (obstacle.height * obstacle.scaleY);
-            sprite.fillStart = 1 - sprite.fillRange;
+            sprite.fillRange = w / (obstacle.height * obstacle.scaleY);
+            sprite.fillStart = 1 - sprite.fillRange - i * w / (obstacle.height * obstacle.scaleY);
+
+            obstacle.anchorY = sprite.fillStart + sprite.fillRange * 0.5;
 
             obstacle.parent = this.node.parent;
-            obstacle.position = bottom.position;
-        }
-        else {
-            var n = Math.ceil(h / w);
-            for (var i = 0; i < n; i++) {
-                var obstacle = cc.instantiate(g_scrGameplay.PFB_OBSTACLE_BOTTOM_FAKE);
-                obstacle.zIndex = LAYER_OBSTACLE;
-
-                var sprite = obstacle.getComponent(cc.Sprite);
-                sprite.fillRange = w / (obstacle.height * obstacle.scaleY);
-                sprite.fillStart = 1 - sprite.fillRange - i * w / (obstacle.height * obstacle.scaleY);
-
-                obstacle.anchorY = sprite.fillStart + sprite.fillRange * 0.5;
-
-                obstacle.parent = this.node.parent;
-                obstacle.position = cc.v2(bottom.position.x, t - (i + 0.5) * w);
-            }
+            obstacle.position = cc.v2(bottom.position.x, t - (i + 0.5) * w);
         }
     },
 
@@ -224,34 +200,21 @@ window.SCR_Player = cc.Class({
         var h = t - b;
         var w = middle.width * middle.scaleX;
 
-        if (h <= w) {
+        var n = Math.ceil(h / w);
+        for (var i = 0; i < n; i++) {
             var obstacle = cc.instantiate(g_scrGameplay.PFB_OBSTACLE_MIDDLE_FAKE);
             obstacle.zIndex = LAYER_OBSTACLE_MIDDLE;
 
             var sprite = obstacle.getComponent(cc.Sprite);
-            sprite.fillRange = h / (obstacle.height * obstacle.scaleY);
-            sprite.fillStart = (1 - sprite.fillRange) * 0.5;
+            sprite.fillRange = w / (obstacle.height * obstacle.scaleY);
+            var totalFillRange = sprite.fillRange * n;
+            sprite.fillStart = i * w / (obstacle.height * obstacle.scaleY) + (1 - totalFillRange) * 0.5;
+
+            obstacle.anchorY = sprite.fillStart + sprite.fillRange * 0.5;
 
             obstacle.parent = this.node.parent;
-            obstacle.position = middle.position;
-        }
-        else {
-            var n = Math.ceil(h / w);
-            for (var i = 0; i < n; i++) {
-                var obstacle = cc.instantiate(g_scrGameplay.PFB_OBSTACLE_MIDDLE_FAKE);
-                obstacle.zIndex = LAYER_OBSTACLE_MIDDLE;
-
-                var sprite = obstacle.getComponent(cc.Sprite);
-                sprite.fillRange = w / (obstacle.height * obstacle.scaleY);
-                var totalFillRange = sprite.fillRange * n;
-                sprite.fillStart = i * w / (obstacle.height * obstacle.scaleY) + (1 - totalFillRange) * 0.5;
-
-                obstacle.anchorY = sprite.fillStart + sprite.fillRange * 0.5;
-
-                obstacle.parent = this.node.parent;
-                var totalHeight = w * n;
-                obstacle.position = cc.v2(middle.position.x, middle.position.y + i * w - totalHeight * 0.5);
-            }
+            var totalHeight = w * n;
+            obstacle.position = cc.v2(middle.position.x, middle.position.y + i * w - totalHeight * 0.5);
         }
     },
 	
@@ -262,14 +225,7 @@ window.SCR_Player = cc.Class({
 				
 				if (this.state == PlayerState.SMALL) {
 					this.enlarge();
-					
-					this.node.getComponent(SCR_Player).rb.linearVelocity = cc.v2(0, 0);
-					this.node.getComponent(SCR_Player).rb.angularVelocity = 0;
-					this.node.rotation = 0;
-					
                     this.node.getComponent(cc.PhysicsCircleCollider).destroy();
-					this.node.getComponent(cc.RigidBody).destroy();
-
                     g_scrGameplay.moveFast();
 				}
 			}
@@ -290,7 +246,16 @@ window.SCR_Player = cc.Class({
                     }
                 }
             }
+
+            if (otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
+                g_scrGameplay.stopMoving();
+            }
 		}
+
+        if (otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
+            this.rb.linearVelocity = cc.v2(500, 1000);
+            this.rb.angularVelocity = ROTATION_VELOCITY * 2;
+        }
 	},
 
     onBeginContact(contact, selfCollider, otherCollider) {
@@ -329,7 +294,8 @@ window.SCR_Player = cc.Class({
 
     onPostSolve(contact, selfCollider, otherCollider) {
 		if (this.state == PlayerState.SMALL) {
-			if (otherCollider.body.type != cc.RigidBodyType.Static) {
+			if (otherCollider.node.name == "top" || otherCollider.node.name == "bottom"
+                || otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
 				this.rb.linearVelocity = cc.v2(500, 1000);
 				this.rb.angularVelocity = ROTATION_VELOCITY * 2;
 			}
