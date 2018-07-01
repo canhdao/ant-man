@@ -245,6 +245,7 @@ cc.Class({
 		if (cc.sys.isNative && ENABLE_ADMOB) {
 			if (!initializedAdmob) {
 				sdkbox.PluginAdMob.init();
+                sdkbox.PluginAdMob.cache("gameover");
 				initializedAdmob = true;
 			}
 		}

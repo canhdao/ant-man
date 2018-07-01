@@ -1,0 +1,29 @@
+{
+    "android": {
+        "AdMob": {
+            "testdevice": "FE20924C46522E2E204587EB339897C6,kGADSimulatorID", 
+            "test": false, 
+            "cache": {
+                "gameover": true
+            }, 
+            "ads": {
+                "gameover": {
+                    "type": "interstitial", 
+                    "id": "ca-app-pub-0081066185741622/2735135900"
+                }
+            }
+        }
+    }, 
+    "ios": {
+        "AdMob": {
+            "test": false, 
+            "safearea": true, 
+            "ads": {
+                "gameover": {
+                    "type": "interstitial", 
+                    "id": "ca-app-pub-0081066185741622/5248524693"
+                }
+            }
+        }
+    }
+}
