@@ -108,6 +108,8 @@ window.SCR_Player = cc.Class({
         var sequence = cc.sequence(scale, setBig);
 
         this.node.runAction(sequence);
+
+        cc.audioEngine.play(g_scrGameplay.sndEnlarge);
 	},
 	
 	shrink() {
@@ -126,6 +128,8 @@ window.SCR_Player = cc.Class({
 		}
 
         this.node.runAction(sequence);
+
+        cc.audioEngine.play(g_scrGameplay.sndShrink);
 	},
 
     setBig() {
@@ -244,6 +248,8 @@ window.SCR_Player = cc.Class({
                         this.generateFakeBottom(otherCollider.node);
                         this.generateFakeMiddle(otherCollider.node.linked1);
                     }
+
+                    cc.audioEngine.play(g_scrGameplay.sndBigImpact);
                 }
             }
 
@@ -255,7 +261,7 @@ window.SCR_Player = cc.Class({
         if (otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
             this.rb.linearVelocity = cc.v2(500, 1000);
             this.rb.angularVelocity = ROTATION_VELOCITY * 2;
-            
+
             if (this.sndFallingID != null) cc.audioEngine.stop(this.sndFallingID);
             cc.audioEngine.play(g_scrGameplay.sndImpactLand);
         }

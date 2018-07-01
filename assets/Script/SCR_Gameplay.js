@@ -187,6 +187,16 @@ cc.Class({
 			url: cc.AudioClip
 		},
 
+        sndEnlarge: {
+            default: null,
+            url: cc.AudioClip
+        },
+
+        sndBigImpact: {
+            default: null,
+            url: cc.AudioClip
+        },
+
         sndFalling: {
             default: null,
             url: cc.AudioClip
@@ -400,7 +410,6 @@ cc.Class({
         }
 		
 		this.state = State.READY;
-		cc.audioEngine.play(this.sndShrink);
 	},
 
     onReplay() {

@@ -3288,6 +3288,12 @@
     "sndShrink": {
       "__uuid__": "e6c8e3bf-3cd3-449e-afc1-2d3b2524fd7e"
     },
+    "sndEnlarge": {
+      "__uuid__": "ae5dd107-1980-4926-92df-ace709aba3fe"
+    },
+    "sndBigImpact": {
+      "__uuid__": "09e63f19-8417-4dd3-96fb-d80441fc0daf"
+    },
     "sndFalling": {
       "__uuid__": "eec13f6c-5535-4f11-a4d2-93042c9bb143"
     },
