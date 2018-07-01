@@ -9,3 +9,5 @@ window.POWER_UP_RATE = 0.1;
 window.POWER_UP_DURATION = 3;
 window.POWER_UP_ROTATION_SPEED = 100;
 window.POWER_UP_MOVE_SPEED_MULTIPLIER = 2;
+
+window.ENABLE_ADMOB = false;

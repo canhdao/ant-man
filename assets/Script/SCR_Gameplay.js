@@ -242,7 +242,7 @@ cc.Class({
         this.character = cc.sys.localStorage.getItem("character");
         if (this.character == null) this.character = "ant";
 		
-		if (cc.sys.isNative) {
+		if (cc.sys.isNative && ENABLE_ADMOB) {
 			if (!initializedAdmob) {
 				sdkbox.PluginAdMob.init();
 				initializedAdmob = true;
@@ -414,7 +414,7 @@ cc.Class({
 
     onReplay() {
         cc.director.loadScene("SCN_Gameplay");
-		if (cc.sys.isNative) {
+		if (cc.sys.isNative && ENABLE_ADMOB) {
 			sdkbox.PluginAdMob.show("gameover");
 		}
     },
