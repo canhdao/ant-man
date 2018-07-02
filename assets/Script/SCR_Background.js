@@ -34,7 +34,7 @@ cc.Class({
     update (dt) {
         if (g_scrGameplay.state != State.FINISH) {
             if (g_scrGameplay.movingFast) {
-                this.node.x -= BACKGROUND_MOVE_SPEED * POWER_UP_MOVE_SPEED_MULTIPLIER * dt;
+                this.node.x -= BACKGROUND_MOVE_SPEED * 2 * POWER_UP_MOVE_SPEED_MULTIPLIER * dt;
             }
             else {
                 this.node.x -= BACKGROUND_MOVE_SPEED * dt;

@@ -18,6 +18,11 @@ window.PlayerState = cc.Enum({
     SHRINKING: 3
 });
 
+window.VehicleType = cc.Enum({
+    FLY:   0,
+    TRUCK: 1
+});
+
 window.SCR_Player = cc.Class({
     extends: cc.Component,
 
@@ -37,6 +42,11 @@ window.SCR_Player = cc.Class({
         //         this._bar = value;
         //     }
         // },
+
+        vehicle: {
+            default: VehicleType.FLY,
+            type: VehicleType
+        }
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -45,7 +55,12 @@ window.SCR_Player = cc.Class({
         this.rb = this.node.getComponent(cc.RigidBody);
         this.rb.fixedRotation = true;
         this.rb.gravityScale = 0;
-		this.state = PlayerState.BIG;
+        if (this.vehicle == VehicleType.FLY) {
+            this.state = PlayerState.BIG;
+        }
+        else {
+            this.state = PlayerState.SMALL;
+        }
 		this.bigCountDown = 0;
 
         var collider = this.node.getComponent(cc.PhysicsCircleCollider);
@@ -233,6 +248,11 @@ window.SCR_Player = cc.Class({
                     g_scrGameplay.moveFast();
 				}
 			}
+
+            if (otherCollider.node.name == "PowerUpTruck") {
+                otherCollider.node.destroy();
+                g_scrGameplay.changeVehicle();
+            }
 
             if (this.state == PlayerState.BIG || this.state == PlayerState.ENLARGING) {
                 if (otherCollider.node.name == "top" || otherCollider.node.name == "bottom") {

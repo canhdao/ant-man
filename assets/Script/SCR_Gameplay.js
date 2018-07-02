@@ -141,6 +141,11 @@ cc.Class({
             default: [],
             type: cc.Node
         },
+
+        playerTruckAnt: {
+            default: null,
+            type: cc.Node
+        },
 		
 		sndFly: {
 			default: null,
@@ -271,10 +276,8 @@ cc.Class({
         this.playerTrails = this.playerAntTrails;
 
         this.playerAnt.zIndex = LAYER_PLAYER;
-        this.playerAnt.scale = cc.v2(1, 1);
 
         this.playerWasp.zIndex = LAYER_PLAYER;
-        this.playerWasp.scale = cc.v2(1, 1);
 		
         for (var i = 0; i < this.playerAntTrails.length; i++) {
             this.playerAntTrails[i].active = false;
@@ -293,6 +296,9 @@ cc.Class({
         if (this.character == "wasp") {
             this.onChangeCharacter();
         }
+
+        this.playerTruckAnt.zIndex = LAYER_PLAYER;
+        this.playerTruckAnt.active = false;
 
         this.pendingGenerateObstacles = false;
 
@@ -442,6 +448,28 @@ cc.Class({
 
 		cc.audioEngine.play(this.sndNext);
         cc.sys.localStorage.setItem("character", this.character);
+    },
+
+    changeVehicle() {
+        if (this.player == this.playerAnt) {
+            this.player = this.playerTruckAnt;
+            this.playerTruckAnt.position = this.playerAnt.position;
+            this.playerTruckAnt.getComponent(cc.RigidBody).linearVelocity = this.playerAnt.getComponent(cc.RigidBody).linearVelocity;
+            this.playerTruckAnt.getComponent(cc.RigidBody).angularVelocity = this.playerAnt.getComponent(cc.RigidBody).angularVelocity;
+            this.playerTruckAnt.getComponent(cc.RigidBody).gravityScale = 1;
+            this.playerAnt.active = false;
+            this.playerTruckAnt.active = true;
+            this.playerTruckAnt.awake = true;
+            console.log(this.playerTruckAnt.getComponent(cc.RigidBody));
+        }
+        else if (this.player == this.playerTruckAnt) {
+            this.player = this.playerAnt;
+            this.playerTruckAnt.active = false;
+            this.playerAnt.active = true;
+            this.playerAnt.position = this.playerTruckAnt.position;
+            this.playerAnt.getComponent(cc.RigidBody).linearVelocity = this.playerTruckAnt.getComponent(cc.RigidBody).linearVelocity;
+            this.playerAnt.getComponent(cc.RigidBody).angularVelocity = this.playerTruckAnt.getComponent(cc.RigidBody).angularVelocity;
+        }
     },
 
     generateObstacles() {

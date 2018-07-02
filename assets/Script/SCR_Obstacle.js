@@ -39,6 +39,11 @@ window.SCR_Obstacle = cc.Class({
 			type: cc.Prefab
 		},
 
+        PFB_POWER_UP_TRUCK: {
+            default: null,
+            type: cc.Prefab
+        },
+
         position: {
             default: ObstaclePosition.TOP,
             type: ObstaclePosition
@@ -59,6 +64,15 @@ window.SCR_Obstacle = cc.Class({
     			powerUp.position = cc.v2(0, 0);
     			powerUp.parent = this.node;
     			this.powerUp = powerUp;
+            }
+            else {
+                r = Math.random();
+                if (r <= POWER_UP_TRUCK_RATE) {
+                    var powerUpTruck = cc.instantiate(this.PFB_POWER_UP_TRUCK);
+                    powerUpTruck.position = cc.v2(0, 0);
+                    powerUpTruck.parent = this.node;
+                    this.powerUpTruck = powerUpTruck;
+                }
             }
 		}
 	},
