@@ -238,7 +238,7 @@ cc.Class({
 
         this.obstacles = [];
 		
-        window.g_scrGameplay= this;
+        window.g_scrGameplay = this;
 
         this.score = 0;
         this.best = cc.sys.localStorage.getItem("best");
@@ -315,38 +315,11 @@ cc.Class({
     // called every frame
     update(dt) {
         if (this.state == State.PLAY) {
-            if (this.obstacleTop != null) {
-                if (this.obstacleTop.x < this.SPAWN_X - this.OBSTACLE_DISTANCE && !this.pendingGenerateObstacles) {
-                    if (this.player.getComponent(SCR_Player).bigCountDown >= 1 || this.player.getComponent(SCR_Player).bigCountDown <= 0) {
-                        this.generateObstacles();
-
-                        if (this.movingFast) {
-                            this.obstacleTop.getComponent(SCR_Obstacle).moveFast();
-                            this.obstacleBottom.getComponent(SCR_Obstacle).moveFast();
-                            this.obstacleMiddle.getComponent(SCR_Obstacle).moveFast();
-                        }
-                        else {
-                            this.obstacleTop.getComponent(SCR_Obstacle).move();
-                            this.obstacleBottom.getComponent(SCR_Obstacle).move();
-                            this.obstacleMiddle.getComponent(SCR_Obstacle).move();
-                        }
-                    }
-                    else {
-                        this.pendingGenerateObstacles = true;
-                    }
-                }
+            if (this.player.getComponent(SCR_Player).vehicle == VehicleType.FLY) {
+                this.flyMode();
             }
-
-            if (this.pendingGenerateObstacles && this.player.getComponent(SCR_Player).state == PlayerState.SMALL) {
-                this.generateObstacles();
-
-                this.obstacleTop.getComponent(SCR_Obstacle).move();
-                this.obstacleBottom.getComponent(SCR_Obstacle).move();
-                this.obstacleMiddle.getComponent(SCR_Obstacle).move();
-
-                this.movingFast = false;
-
-                this.pendingGenerateObstacles = false;
+            else {
+                this.truckMode();
             }
         }
 
@@ -361,6 +334,51 @@ cc.Class({
                         }
                     }
                 }
+            }
+        }
+    },
+
+    flyMode() {
+        if (this.obstacleBottom != null) {
+            if (this.obstacleBottom.x < this.SPAWN_X - this.OBSTACLE_DISTANCE && !this.pendingGenerateObstacles) {
+                if (this.player.getComponent(SCR_Player).bigCountDown >= 1 || this.player.getComponent(SCR_Player).bigCountDown <= 0) {
+                    this.generateObstacles();
+
+                    if (this.movingFast) {
+                        this.obstacleTop.getComponent(SCR_Obstacle).moveFast();
+                        this.obstacleBottom.getComponent(SCR_Obstacle).moveFast();
+                        this.obstacleMiddle.getComponent(SCR_Obstacle).moveFast();
+                    }
+                    else {
+                        this.obstacleTop.getComponent(SCR_Obstacle).move();
+                        this.obstacleBottom.getComponent(SCR_Obstacle).move();
+                        this.obstacleMiddle.getComponent(SCR_Obstacle).move();
+                    }
+                }
+                else {
+                    this.pendingGenerateObstacles = true;
+                }
+            }
+        }
+
+        if (this.pendingGenerateObstacles && this.player.getComponent(SCR_Player).state == PlayerState.SMALL) {
+            this.generateObstacles();
+
+            this.obstacleTop.getComponent(SCR_Obstacle).move();
+            this.obstacleBottom.getComponent(SCR_Obstacle).move();
+            this.obstacleMiddle.getComponent(SCR_Obstacle).move();
+
+            this.movingFast = false;
+
+            this.pendingGenerateObstacles = false;
+        }
+    },
+
+    truckMode() {
+        if (this.obstacleBottom != null) {
+            if (this.obstacleBottom.x < this.SPAWN_X - this.OBSTACLE_DISTANCE) {
+                this.generateObstaclesTruckMode();
+                this.obstacleBottom.getComponent(SCR_Obstacle).move();
             }
         }
     },
@@ -460,7 +478,6 @@ cc.Class({
             this.playerAnt.active = false;
             this.playerTruckAnt.active = true;
             this.playerTruckAnt.awake = true;
-            console.log(this.playerTruckAnt.getComponent(cc.RigidBody));
         }
         else if (this.player == this.playerTruckAnt) {
             this.player = this.playerAnt;
@@ -486,7 +503,7 @@ cc.Class({
         this.obstacleMiddle.linked1 = this.obstacleTop;
         this.obstacleMiddle.linked2 = this.obstacleBottom;
 
-        this.SPAWN_X = SCREEN_WIDTH * 0.5 + this.obstacleTop.width * 0.5 * this.obstacleTop.scaleX;
+        this.SPAWN_X = SCREEN_WIDTH * 0.5 + this.obstacleBottom.width * 0.5 * this.obstacleBottom.scaleX;
 
         var refY = (Math.random() - 0.5) * (SCREEN_HEIGHT - this.ground1.height) * OBSTACLE_CENTER_RANDOM_RANGE + this.ground1.height * 0.5;
 
@@ -508,6 +525,23 @@ cc.Class({
         this.obstacles.push(this.obstacleTop);
         this.obstacles.push(this.obstacleBottom);
         this.obstacles.push(this.obstacleMiddle);
+    },
+
+    generateObstaclesTruckMode() {
+        this.obstacleTop = null;
+        this.obstacleMiddle = null;
+        this.obstacleBottom = cc.instantiate(this.PFB_OBSTACLE_BOTTOM);
+
+        this.SPAWN_X = SCREEN_WIDTH * 0.5 + this.obstacleBottom.width * 0.5 * this.obstacleBottom.scaleX;
+
+        var refY = (Math.random() - 0.5) * (SCREEN_HEIGHT - this.ground1.height) * OBSTACLE_CENTER_RANDOM_RANGE + this.ground1.height * 0.5;
+
+        this.obstacleBottom.parent = this.node;
+        this.obstacleBottom.x = this.SPAWN_X;
+        this.obstacleBottom.y = refY - this.OBSTACLE_SPACE * 0.5 - this.obstacleBottom.height * this.obstacleBottom.scaleY * 0.5;
+        this.obstacleBottom.zIndex = LAYER_OBSTACLE;
+
+        this.obstacles.push(this.obstacleBottom);
     },
 
     move() {
