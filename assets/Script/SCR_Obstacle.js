@@ -106,8 +106,8 @@ window.SCR_Obstacle = cc.Class({
 		this.node.destroy();
 		var index = g_scrGameplay.obstacles.indexOf(this.node);
 		g_scrGameplay.obstacles.splice(index, 1);
-        if (g_scrGameplay.obstacleTop == this.node) {
-            g_scrGameplay.obstacleTop = null;
+        if (g_scrGameplay.obstacleBottom == this.node) {
+            g_scrGameplay.obstacleBottom = null;
         }
 	}
 });

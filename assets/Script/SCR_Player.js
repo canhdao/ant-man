@@ -107,15 +107,40 @@ window.SCR_Player = cc.Class({
                 this.collidedNode.linked2.x = this.collidedNode.x;
             }
         }
+
+        if (this.vehicle == VehicleType.TRUCK) {
+            this.node.x = -SCREEN_WIDTH * 0.5 + SCREEN_WIDTH * 0.33;
+        }
     },
 
     enableGravity() {
         this.rb.gravityScale = 1;
     },
 
+    compare(truckY, groundY) {
+        console.log(truckY + " " + groundY);
+        if (truckY >= groundY - 1 && truckY <= groundY + 3) {
+            console.log(true);
+            return true;
+        }
+        else {
+            console.log(false);
+            return false;
+        }
+    },
+
     fly() {
-        this.rb.linearVelocity = cc.v2(0, 1000);
-		this.rb.angularVelocity = -ROTATION_VELOCITY;
+        if (this.vehicle == VehicleType.FLY) {
+            this.rb.linearVelocity = cc.v2(0, 1000);
+    		this.rb.angularVelocity = -ROTATION_VELOCITY;
+        }
+        else {
+            var onGround = this.compare(this.node.y, -SCREEN_HEIGHT * 0.5 + g_scrGameplay.ground1.height * g_scrGameplay.ground1.scaleY + this.node.getComponent(cc.CircleCollider).radius * this.node.scaleX);
+            if (onGround) {
+                this.rb.linearVelocity = cc.v2(0, 2000);
+                this.rb.angularVelocity = -ROTATION_VELOCITY;
+            }
+        }
     },
 	
 	enlarge() {
@@ -283,12 +308,14 @@ window.SCR_Player = cc.Class({
             }
 		}
 
-        if (otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
-            this.rb.linearVelocity = cc.v2(500, 1000);
-            this.rb.angularVelocity = ROTATION_VELOCITY * 2;
+        if (this.vehicle == VehicleType.FLY) {
+            if (otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
+                this.rb.linearVelocity = cc.v2(500, 1000);
+                this.rb.angularVelocity = ROTATION_VELOCITY * 2;
 
-            if (this.sndFallingID != null) cc.audioEngine.stop(this.sndFallingID);
-            cc.audioEngine.play(g_scrGameplay.sndImpactLand);
+                if (this.sndFallingID != null) cc.audioEngine.stop(this.sndFallingID);
+                cc.audioEngine.play(g_scrGameplay.sndImpactLand);
+            }
         }
 
         if (this.vehicle == VehicleType.TRUCK) {
@@ -296,6 +323,16 @@ window.SCR_Player = cc.Class({
                 g_scrGameplay.stopMoving();
                 this.rb.linearVelocity = cc.v2(500, 1000);
                 this.rb.angularVelocity = ROTATION_VELOCITY * 2;
+            }
+
+            if (g_scrGameplay.state == State.FALL) {
+                if (otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
+                    this.rb.linearVelocity = cc.v2(500, 1000);
+                    this.rb.angularVelocity = ROTATION_VELOCITY * 2;
+
+                    if (this.sndFallingID != null) cc.audioEngine.stop(this.sndFallingID);
+                    cc.audioEngine.play(g_scrGameplay.sndImpactLand);
+                }
             }
         }
 	},
@@ -327,22 +364,22 @@ window.SCR_Player = cc.Class({
 
 			if (g_scrGameplay.state == State.PLAY || g_scrGameplay.state == State.FALL) {
 				if (otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
-					if (this.sndFallingID != null) cc.audioEngine.stop(this.sndFallingID);
+					if (this.sndFallingID != null) {
+                        cc.audioEngine.stop(this.sndFallingID);
+                        this.sndFallingID = null;
+                    }
 					cc.audioEngine.play(g_scrGameplay.sndImpactLand);
 				}
 			}
 		}
 
         if (this.vehicle == VehicleType.TRUCK) {
-            if (g_scrGameplay.state == State.PLAY) {
-                if (otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
-                    g_scrGameplay.stopMoving();
-                }
-            }
-
             if (g_scrGameplay.state == State.PLAY || g_scrGameplay.state == State.FALL) {
                 if (otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
-                    if (this.sndFallingID != null) cc.audioEngine.stop(this.sndFallingID);
+                    if (this.sndFallingID != null) {
+                        cc.audioEngine.stop(this.sndFallingID);
+                        this.sndFallingID = null;
+                    }
                     cc.audioEngine.play(g_scrGameplay.sndImpactLand);
                 }
             }
@@ -357,13 +394,6 @@ window.SCR_Player = cc.Class({
 				this.rb.angularVelocity = ROTATION_VELOCITY * 2;
 			}
 		}
-
-        if (this.vehicle == VehicleType.TRUCK) {
-            if (otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
-                this.rb.linearVelocity = cc.v2(500, 1000);
-                this.rb.angularVelocity = ROTATION_VELOCITY * 2;
-            }
-        }
     }
 });
 

@@ -534,11 +534,9 @@ cc.Class({
 
         this.SPAWN_X = SCREEN_WIDTH * 0.5 + this.obstacleBottom.width * 0.5 * this.obstacleBottom.scaleX;
 
-        var refY = (Math.random() - 0.5) * (SCREEN_HEIGHT - this.ground1.height) * OBSTACLE_CENTER_RANDOM_RANGE + this.ground1.height * 0.5;
-
         this.obstacleBottom.parent = this.node;
         this.obstacleBottom.x = this.SPAWN_X;
-        this.obstacleBottom.y = refY - this.OBSTACLE_SPACE * 0.5 - this.obstacleBottom.height * this.obstacleBottom.scaleY * 0.5;
+        this.obstacleBottom.y = -SCREEN_HEIGHT * 0.5 + this.ground1.height + TRUCK_OBSTACLE_HEIGHT - this.obstacleBottom.height * 0.5 * this.obstacleBottom.scaleY;
         this.obstacleBottom.zIndex = LAYER_OBSTACLE;
 
         this.obstacles.push(this.obstacleBottom);
