@@ -69,6 +69,7 @@ window.SCR_Player = cc.Class({
     },
 
     update(dt) {
+		// Rotate up and down
 		if (g_scrGameplay.state == State.PLAY) {
 			this.rb.angularVelocity += dt * ROTATION_ACCELERATION;
 			
@@ -78,8 +79,16 @@ window.SCR_Player = cc.Class({
 				this.rb.angularVelocity += dt * damping;
 			}
 			
-			if (this.node.rotation > 15) {
-				this.node.rotation = 15;
+			if (this.vehicle == VehicleType.FLY) {
+				if (this.node.rotation > 15) {
+					this.node.rotation = 15;
+				}
+			}
+			
+			if (this.vehicle == VehicleType.TRUCK) {
+				if (this.node.rotation > 0) {
+					this.node.rotation = 0;
+				}
 			}
 			
 			if (this.state == PlayerState.BIG) {
@@ -94,10 +103,12 @@ window.SCR_Player = cc.Class({
             if (this.node.y > SCREEN_HEIGHT * 0.5 - this.colliderRadius * this.node.scaleX) this.node.y = SCREEN_HEIGHT * 0.5 - this.colliderRadius * this.node.scaleX;
 		}
 		
+		// Game over
         if (this.node.x >= SCREEN_WIDTH * 0.5 + this.node.width * 0.5 * this.node.scaleX) {
             g_scrGameplay.gameOver();
         }
 
+		// Fix visual bug
         if (this.collidedNode != null) {
             if (this.collidedNode.linked1 != null) {
                 this.collidedNode.linked1.x = this.collidedNode.x;
@@ -108,7 +119,8 @@ window.SCR_Player = cc.Class({
             }
         }
 
-        if (this.vehicle == VehicleType.TRUCK) {
+		// Forced x position in TRUCK mode
+        if (this.vehicle == VehicleType.TRUCK && g_scrGameplay.state == State.PLAY) {
             this.node.x = -SCREEN_WIDTH * 0.5 + SCREEN_WIDTH * 0.33;
         }
     },
@@ -118,13 +130,10 @@ window.SCR_Player = cc.Class({
     },
 
     compare(truckY, groundY) {
-        console.log(truckY + " " + groundY);
         if (truckY >= groundY - 1 && truckY <= groundY + 3) {
-            console.log(true);
             return true;
         }
         else {
-            console.log(false);
             return false;
         }
     },
@@ -133,12 +142,14 @@ window.SCR_Player = cc.Class({
         if (this.vehicle == VehicleType.FLY) {
             this.rb.linearVelocity = cc.v2(0, 1000);
     		this.rb.angularVelocity = -ROTATION_VELOCITY;
+			cc.audioEngine.play(g_scrGameplay.sndFly);
         }
         else {
             var onGround = this.compare(this.node.y, -SCREEN_HEIGHT * 0.5 + g_scrGameplay.ground1.height * g_scrGameplay.ground1.scaleY + this.node.getComponent(cc.CircleCollider).radius * this.node.scaleX);
             if (onGround) {
-                this.rb.linearVelocity = cc.v2(0, 2000);
+                this.rb.linearVelocity = cc.v2(0, 1000);
                 this.rb.angularVelocity = -ROTATION_VELOCITY;
+				cc.audioEngine.play(g_scrGameplay.sndFly);
             }
         }
     },
@@ -268,6 +279,7 @@ window.SCR_Player = cc.Class({
     },
 	
 	onCollisionEnter(otherCollider, selfCollider) {
+		//console.log("onCollisionEnter " + otherCollider.node.name);
         if (g_scrGameplay.state == State.PLAY) {
 			if (otherCollider.node.name == "PowerUp") {
 				otherCollider.node.destroy();
@@ -303,15 +315,16 @@ window.SCR_Player = cc.Class({
                 }
             }
 
-            if (otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
-                g_scrGameplay.stopMoving();
-            }
+			if (this.vehicle == VehicleType.FLY) {
+				if (otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
+					g_scrGameplay.stopMoving();
+				}
+			}
 		}
 
         if (this.vehicle == VehicleType.FLY) {
             if (otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
-                this.rb.linearVelocity = cc.v2(500, 1000);
-                this.rb.angularVelocity = ROTATION_VELOCITY * 2;
+                this.bounceToDie();
 
                 if (this.sndFallingID != null) cc.audioEngine.stop(this.sndFallingID);
                 cc.audioEngine.play(g_scrGameplay.sndImpactLand);
@@ -319,16 +332,21 @@ window.SCR_Player = cc.Class({
         }
 
         if (this.vehicle == VehicleType.TRUCK) {
-            if (otherCollider.node.name == "front") {
-                g_scrGameplay.stopMoving();
-                this.rb.linearVelocity = cc.v2(500, 1000);
-                this.rb.angularVelocity = ROTATION_VELOCITY * 2;
-            }
+			if (g_scrGameplay.state == State.PLAY) {
+				if (otherCollider.node.name == "front") {
+					g_scrGameplay.stopMoving();
+					this.bounceToDie();
+					
+					this.bounceObstacle(otherCollider.node.parent);
+
+					cc.audioEngine.play(g_scrGameplay.sndImpactWall);
+					this.sndFallingID = cc.audioEngine.play(g_scrGameplay.sndFalling);
+				}
+			}
 
             if (g_scrGameplay.state == State.FALL) {
                 if (otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
-                    this.rb.linearVelocity = cc.v2(500, 1000);
-                    this.rb.angularVelocity = ROTATION_VELOCITY * 2;
+                    this.bounceToDie();
 
                     if (this.sndFallingID != null) cc.audioEngine.stop(this.sndFallingID);
                     cc.audioEngine.play(g_scrGameplay.sndImpactLand);
@@ -338,6 +356,7 @@ window.SCR_Player = cc.Class({
 	},
 
     onBeginContact(contact, selfCollider, otherCollider) {
+		//console.log("onBeginContact " + otherCollider.node.name);
 		if (this.state == PlayerState.SMALL && this.vehicle == VehicleType.FLY) {
 			if (g_scrGameplay.state == State.PLAY) {
 				if (otherCollider.node.name == "top" || otherCollider.node.name == "bottom"
@@ -347,15 +366,8 @@ window.SCR_Player = cc.Class({
 
 				if (otherCollider.node.name == "top" || otherCollider.node.name == "bottom") {
 					this.collidedNode = otherCollider.node;
-
-					var scale1 = cc.scaleTo(0.05, 0.95, 0.95).easing(cc.easeSineInOut(0.05));
-					var scale2 = cc.scaleTo(0.1, 1.025, 1.025).easing(cc.easeSineInOut(0.1));
-					var scale3 = cc.scaleTo(0.05, 1, 1).easing(cc.easeSineInOut(0.05));
-					var sequence = cc.sequence(scale1, scale2, scale3);
-
-					otherCollider.node.getComponent(cc.PhysicsBoxCollider).destroy();
-					otherCollider.node.getComponent(cc.RigidBody).destroy();
-					otherCollider.node.runAction(sequence);
+					
+					this.bounceObstacle(otherCollider.node);
 
 					cc.audioEngine.play(g_scrGameplay.sndImpactWall);
 					this.sndFallingID = cc.audioEngine.play(g_scrGameplay.sndFalling);
@@ -374,7 +386,7 @@ window.SCR_Player = cc.Class({
 		}
 
         if (this.vehicle == VehicleType.TRUCK) {
-            if (g_scrGameplay.state == State.PLAY || g_scrGameplay.state == State.FALL) {
+            if (g_scrGameplay.state == State.FALL) {
                 if (otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
                     if (this.sndFallingID != null) {
                         cc.audioEngine.stop(this.sndFallingID);
@@ -387,13 +399,39 @@ window.SCR_Player = cc.Class({
     },
 
     onPostSolve(contact, selfCollider, otherCollider) {
-		if (this.state == PlayerState.SMALL && this.vehicle == VehicleType.FLY) {
-			if (otherCollider.node.name == "top" || otherCollider.node.name == "bottom"
-                || otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
-				this.rb.linearVelocity = cc.v2(500, 1000);
-				this.rb.angularVelocity = ROTATION_VELOCITY * 2;
+		//console.log("onPostSolve " + otherCollider.node.name);
+		if (this.vehicle == VehicleType.FLY) {
+			if (this.state == PlayerState.SMALL) {
+				if (otherCollider.node.name == "top" || otherCollider.node.name == "bottom"
+				||  otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
+					this.bounceToDie();
+				}
 			}
 		}
-    }
+		
+		if (this.vehicle == VehicleType.TRUCK) {
+			if (g_scrGameplay.state == State.FALL) {
+				if (otherCollider.node.name == "Ground1" || otherCollider.node.name == "Ground2") {
+					this.bounceToDie();
+				}
+			}
+		}
+    },
+	
+	bounceToDie() {
+		this.rb.linearVelocity = cc.v2(500, 1000);
+		this.rb.angularVelocity = ROTATION_VELOCITY * 2;
+	},
+	
+	bounceObstacle(obstacle) {
+		var scale1 = cc.scaleTo(0.05, 0.95, 0.95).easing(cc.easeSineInOut(0.05));
+		var scale2 = cc.scaleTo(0.1, 1.025, 1.025).easing(cc.easeSineInOut(0.1));
+		var scale3 = cc.scaleTo(0.05, 1, 1).easing(cc.easeSineInOut(0.05));
+		var sequence = cc.sequence(scale1, scale2, scale3);
+
+		obstacle.getComponent(cc.PhysicsBoxCollider).destroy();
+		obstacle.getComponent(cc.RigidBody).destroy();
+		obstacle.runAction(sequence);
+	}
 });
 

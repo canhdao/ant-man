@@ -223,6 +223,7 @@ cc.Class({
         cc.director.getPhysicsManager().enabled = true;
         cc.director.getPhysicsManager().gravity = cc.v2(0, -3000);
         cc.director.getCollisionManager().enabled = true;
+		//cc.director.getCollisionManager().enabledDebugDraw = true;
 		
         SCREEN_WIDTH = this.node.width;
         SCREEN_HEIGHT = this.node.height;
@@ -411,7 +412,6 @@ cc.Class({
 		
         if (this.state == State.PLAY) {
             this.player.getComponent(SCR_Player).fly();
-			cc.audioEngine.play(this.sndFly);
         }
     },
 	
