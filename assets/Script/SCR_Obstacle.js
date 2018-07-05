@@ -44,6 +44,11 @@ window.SCR_Obstacle = cc.Class({
             type: cc.Prefab
         },
 
+        PFB_POWER_UP_FLY: {
+            default: null,
+            type: cc.Prefab
+        },
+
         position: {
             default: ObstaclePosition.TOP,
             type: ObstaclePosition
@@ -60,18 +65,12 @@ window.SCR_Obstacle = cc.Class({
 		if (this.position == ObstaclePosition.MIDDLE && g_scrGameplay.player.getComponent(SCR_Player).state == PlayerState.SMALL) {
             var r = Math.random();
             if (r <= POWER_UP_RATE) {
-    			var powerUp = cc.instantiate(this.PFB_POWER_UP);
-    			powerUp.position = cc.v2(0, 0);
-    			powerUp.parent = this.node;
-    			this.powerUp = powerUp;
+                this.spawnPowerUpBig();
             }
             else {
                 r = Math.random();
                 if (r <= POWER_UP_TRUCK_RATE) {
-                    var powerUpTruck = cc.instantiate(this.PFB_POWER_UP_TRUCK);
-                    powerUpTruck.position = cc.v2(0, 0);
-                    powerUpTruck.parent = this.node;
-                    this.powerUpTruck = powerUpTruck;
+                    this.spawnPowerUpTruck();
                 }
             }
 		}
@@ -109,5 +108,26 @@ window.SCR_Obstacle = cc.Class({
         if (g_scrGameplay.obstacleBottom == this.node) {
             g_scrGameplay.obstacleBottom = null;
         }
-	}
+	},
+
+    spawnPowerUpBig() {
+        var powerUp = cc.instantiate(this.PFB_POWER_UP);
+        powerUp.position = cc.v2(0, 0);
+        powerUp.parent = this.node;
+        this.powerUp = powerUp;
+    },
+
+    spawnPowerUpTruck() {
+        var powerUpTruck = cc.instantiate(this.PFB_POWER_UP_TRUCK);
+        powerUpTruck.position = cc.v2(0, 0);
+        powerUpTruck.parent = this.node;
+        this.powerUpTruck = powerUpTruck;
+    },
+
+    spawnPowerUpFly() {
+        var powerUpFly = cc.instantiate(this.PFB_POWER_UP_FLY);
+        powerUpFly.position = cc.v2(0, this.node.height * 0.5 + 150);
+        powerUpFly.parent = this.node;
+        this.powerUpFly = powerUpFly;
+    }
 });

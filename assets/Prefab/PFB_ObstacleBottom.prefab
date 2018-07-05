@@ -245,6 +245,9 @@
     "_enabled": true,
     "PFB_POWER_UP": null,
     "PFB_POWER_UP_TRUCK": null,
+    "PFB_POWER_UP_FLY": {
+      "__uuid__": "e12be1e2-f56c-4d8b-9851-a5823c9d8a84"
+    },
     "position": 2
   },
   {

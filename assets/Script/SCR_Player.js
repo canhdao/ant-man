@@ -145,7 +145,19 @@ window.SCR_Player = cc.Class({
 			cc.audioEngine.play(g_scrGameplay.sndFly);
         }
         else {
-            var onGround = this.compare(this.node.y, -SCREEN_HEIGHT * 0.5 + g_scrGameplay.ground1.height * g_scrGameplay.ground1.scaleY + this.node.getComponent(cc.CircleCollider).radius * this.node.scaleX);
+            var found = null;
+            for (var i = 0; i < g_scrGameplay.obstacles.length; i++) {
+                var left = g_scrGameplay.obstacles[i].x - g_scrGameplay.obstacles[i].width * 0.5;
+                var right = g_scrGameplay.obstacles[i].x + g_scrGameplay.obstacles[i].width * 0.5;
+                if (this.node.x >= left && this.node.x <= right) {
+                    found = g_scrGameplay.obstacles[i];
+                    break;
+                }
+            }
+
+            if (found == null) found = g_scrGameplay.ground1;
+
+            var onGround = this.compare(this.node.y, found.y + found.height * 0.5 + this.node.getComponent(cc.CircleCollider).radius * this.node.scaleX);
             if (onGround) {
                 this.rb.linearVelocity = cc.v2(0, 1000);
                 this.rb.angularVelocity = -ROTATION_VELOCITY;
@@ -292,6 +304,11 @@ window.SCR_Player = cc.Class({
 			}
 
             if (otherCollider.node.name == "PowerUpTruck") {
+                otherCollider.node.destroy();
+                g_scrGameplay.changeVehicle();
+            }
+
+            if (otherCollider.node.name == "PowerUpFly") {
                 otherCollider.node.destroy();
                 g_scrGameplay.changeVehicle();
             }

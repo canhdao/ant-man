@@ -379,7 +379,6 @@ cc.Class({
         if (this.obstacleBottom != null) {
             if (this.obstacleBottom.x < this.SPAWN_X - this.OBSTACLE_DISTANCE) {
                 this.generateObstaclesTruckMode();
-                this.obstacleBottom.getComponent(SCR_Obstacle).move();
             }
         }
     },
@@ -530,16 +529,26 @@ cc.Class({
     generateObstaclesTruckMode() {
         this.obstacleTop = null;
         this.obstacleMiddle = null;
-        this.obstacleBottom = cc.instantiate(this.PFB_OBSTACLE_BOTTOM);
 
-        this.SPAWN_X = SCREEN_WIDTH * 0.5 + this.obstacleBottom.width * 0.5 * this.obstacleBottom.scaleX;
+        var r = Math.random() * 4;
+        for (var i = 0; i < r; i++) {
+            this.obstacleBottom = cc.instantiate(this.PFB_OBSTACLE_BOTTOM);
 
-        this.obstacleBottom.parent = this.node;
-        this.obstacleBottom.x = this.SPAWN_X;
-        this.obstacleBottom.y = -SCREEN_HEIGHT * 0.5 + this.ground1.height + TRUCK_OBSTACLE_HEIGHT - this.obstacleBottom.height * 0.5 * this.obstacleBottom.scaleY;
-        this.obstacleBottom.zIndex = LAYER_OBSTACLE;
+            this.SPAWN_X = SCREEN_WIDTH * 0.5 + this.obstacleBottom.width * 0.5 * this.obstacleBottom.scaleX;
 
-        this.obstacles.push(this.obstacleBottom);
+            this.obstacleBottom.parent = this.node;
+            this.obstacleBottom.x = this.SPAWN_X + i * this.obstacleBottom.width * this.obstacleBottom.scaleX;
+            this.obstacleBottom.y = -SCREEN_HEIGHT * 0.5 + this.ground1.height + (i + 1) * TRUCK_OBSTACLE_HEIGHT - this.obstacleBottom.height * 0.5 * this.obstacleBottom.scaleY;
+            this.obstacleBottom.zIndex = LAYER_OBSTACLE;
+
+            this.obstacles.push(this.obstacleBottom);
+
+            this.obstacleBottom.getComponent(SCR_Obstacle).move();
+
+            if (i == 3) {
+                this.obstacleBottom.getComponent(SCR_Obstacle).spawnPowerUpFly();
+            }
+        }
     },
 
     move() {
