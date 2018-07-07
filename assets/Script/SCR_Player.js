@@ -130,7 +130,7 @@ window.SCR_Player = cc.Class({
     },
 
     compare(truckY, groundY) {
-        if (truckY >= groundY - 1 && truckY <= groundY + 3) {
+        if (truckY >= groundY - 1 && truckY <= groundY + 6) {
             return true;
         }
         else {
@@ -140,7 +140,7 @@ window.SCR_Player = cc.Class({
 
     fly() {
         if (this.vehicle == VehicleType.FLY) {
-            this.rb.linearVelocity = cc.v2(0, 1000);
+            this.rb.linearVelocity = cc.v2(0, FLY_VELOCITY);
     		this.rb.angularVelocity = -ROTATION_VELOCITY;
 			cc.audioEngine.play(g_scrGameplay.sndFly);
         }
@@ -159,7 +159,7 @@ window.SCR_Player = cc.Class({
 
             var onGround = this.compare(this.node.y - (this.node.getComponent(cc.CircleCollider).radius - this.node.getComponent(cc.CircleCollider).offset.y) * this.node.scaleX, found.y + found.height * 0.5);
             if (onGround) {
-                this.rb.linearVelocity = cc.v2(0, 1000);
+                this.rb.linearVelocity = cc.v2(0, JUMP_VELOCITY);
                 this.rb.angularVelocity = -ROTATION_VELOCITY;
 				cc.audioEngine.play(g_scrGameplay.sndJump);
             }
@@ -299,18 +299,20 @@ window.SCR_Player = cc.Class({
 				if (this.state == PlayerState.SMALL) {
 					this.enlarge();
                     this.node.getComponent(cc.PhysicsCircleCollider).destroy();
-                    g_scrGameplay.moveFast();
+                    g_scrGameplay.move(MoveSpeed.VERY_FAST);
 				}
 			}
 
             if (otherCollider.node.name == "PowerUpTruck") {
                 otherCollider.node.destroy();
                 g_scrGameplay.changeVehicle();
+                g_scrGameplay.move(MoveSpeed.FAST);
             }
 
             if (otherCollider.node.name == "PowerUpFly") {
                 otherCollider.node.destroy();
                 g_scrGameplay.changeVehicle();
+                g_scrGameplay.move(MoveSpeed.NORMAL);
             }
 
             if (this.state == PlayerState.BIG || this.state == PlayerState.ENLARGING) {

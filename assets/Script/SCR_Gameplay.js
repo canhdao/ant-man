@@ -16,6 +16,13 @@ window.State = cc.Enum({
     FINISH: 4
 });
 
+window.MoveSpeed = cc.Enum({
+    ZERO:      0,
+    NORMAL:    1,
+    FAST:      2,
+    VERY_FAST: 3
+});
+
 var initializedAdmob = false;
 
 cc.Class({
@@ -244,7 +251,10 @@ cc.Class({
             self.onTouchStart(event);
         }, this.node);
 
-        this.OBSTACLE_DISTANCE = SCREEN_WIDTH * OBSTACLE_DISTANCE_K;
+        this.OBSTACLE_DISTANCE_FLY_MODE = SCREEN_WIDTH * OBSTACLE_DISTANCE_K_FLY_MODE;
+        this.OBSTACLE_DISTANCE_TRUCK_MODE = SCREEN_WIDTH * OBSTACLE_DISTANCE_K_TRUCK_MODE;
+        this.OBSTACLE_DISTANCE_TRUCK_MODE_FIRST_TIME = SCREEN_WIDTH * OBSTACLE_DISTANCE_K_TRUCK_MODE_FIRST_TIME;
+
         this.OBSTACLE_SPACE = SCREEN_WIDTH * OBSTACLE_SPACE_K;
 
         this.obstacles = [];
@@ -302,7 +312,7 @@ cc.Class({
 
         this.replay.active = false;
 
-        this.movingFast = false;
+        this.moveSpeed = MoveSpeed.NORMAL;
 
         if (this.character == "wasp") {
             this.onChangeCharacter();
@@ -354,20 +364,13 @@ cc.Class({
 
     flyMode() {
         if (this.obstacleBottom != null) {
-            if (this.obstacleBottom.x < this.SPAWN_X - this.OBSTACLE_DISTANCE && !this.pendingGenerateObstacles) {
+            if (this.obstacleBottom.x < this.SPAWN_X - this.OBSTACLE_DISTANCE_FLY_MODE && !this.pendingGenerateObstacles) {
                 if (this.player.getComponent(SCR_Player).bigCountDown >= 1 || this.player.getComponent(SCR_Player).bigCountDown <= 0) {
                     this.generateObstacles();
 
-                    if (this.movingFast) {
-                        this.obstacleTop.getComponent(SCR_Obstacle).moveFast();
-                        this.obstacleBottom.getComponent(SCR_Obstacle).moveFast();
-                        this.obstacleMiddle.getComponent(SCR_Obstacle).moveFast();
-                    }
-                    else {
-                        this.obstacleTop.getComponent(SCR_Obstacle).move();
-                        this.obstacleBottom.getComponent(SCR_Obstacle).move();
-                        this.obstacleMiddle.getComponent(SCR_Obstacle).move();
-                    }
+                    this.obstacleTop.getComponent(SCR_Obstacle).move();
+                    this.obstacleBottom.getComponent(SCR_Obstacle).move();
+                    this.obstacleMiddle.getComponent(SCR_Obstacle).move();
                 }
                 else {
                     this.pendingGenerateObstacles = true;
@@ -378,11 +381,11 @@ cc.Class({
         if (this.pendingGenerateObstacles && this.player.getComponent(SCR_Player).state == PlayerState.SMALL) {
             this.generateObstacles();
 
+            this.moveSpeed = MoveSpeed.NORMAL;
+
             this.obstacleTop.getComponent(SCR_Obstacle).move();
             this.obstacleBottom.getComponent(SCR_Obstacle).move();
             this.obstacleMiddle.getComponent(SCR_Obstacle).move();
-
-            this.movingFast = false;
 
             this.pendingGenerateObstacles = false;
         }
@@ -390,7 +393,13 @@ cc.Class({
 
     truckMode() {
         if (this.obstacleBottom != null) {
-            if (this.obstacleBottom.x < this.SPAWN_X - this.OBSTACLE_DISTANCE) {
+            var distance = this.OBSTACLE_DISTANCE_TRUCK_MODE;
+
+            if (this.obstacleBottom.linked2 != null) {
+                distance = this.OBSTACLE_DISTANCE_TRUCK_MODE_FIRST_TIME;
+            }
+
+            if (this.obstacleBottom.x < this.SPAWN_X - distance) {
                 this.generateObstaclesTruckMode();
             }
         }
@@ -569,11 +578,13 @@ cc.Class({
             this.SPAWN_X = SCREEN_WIDTH * 0.5 + this.obstacleBottom.width * 0.5 * this.obstacleBottom.scaleX;
 
             this.obstacleBottom.parent = this.node;
-            this.obstacleBottom.x = this.SPAWN_X + i * this.obstacleBottom.width * this.obstacleBottom.scaleX;
+            this.obstacleBottom.x = this.SPAWN_X + i * (this.obstacleBottom.width * this.obstacleBottom.scaleX + TRUCK_OBSTACLE_SPACE);
             this.obstacleBottom.y = -SCREEN_HEIGHT * 0.5 + this.ground1.height + (i + 1) * TRUCK_OBSTACLE_HEIGHT - this.obstacleBottom.height * 0.5 * this.obstacleBottom.scaleY;
             this.obstacleBottom.zIndex = LAYER_OBSTACLE;
 
             this.obstacles.push(this.obstacleBottom);
+
+            this.move(MoveSpeed.FAST);
 
             this.obstacleBottom.getComponent(SCR_Obstacle).move();
 
@@ -583,29 +594,20 @@ cc.Class({
         }
     },
 
-    move() {
+    move(speed) {
+        this.moveSpeed = speed;
+
         for (var i = 0; i < this.obstacles.length; i++) {
             this.obstacles[i].getComponent(SCR_Obstacle).move();
         }
 
         this.ground1.getComponent(SCR_Ground).move();
         this.ground2.getComponent(SCR_Ground).move();
-
-        this.movingFast = false;
-    },
-
-    moveFast() {
-        for (var i = 0; i < this.obstacles.length; i++) {
-            this.obstacles[i].getComponent(SCR_Obstacle).moveFast();
-        }
-
-        this.ground1.getComponent(SCR_Ground).moveFast();
-        this.ground2.getComponent(SCR_Ground).moveFast();
-
-        this.movingFast = true;
     },
 	
     stopMoving() {
+        this.moveSpeed = MoveSpeed.ZERO;
+        
         for (var i = 0; i < this.obstacles.length; i++) {
             this.obstacles[i].getComponent(SCR_Obstacle).stop();
             if (this.obstacles[i].getComponent(cc.PhysicsBoxCollider) != null) {

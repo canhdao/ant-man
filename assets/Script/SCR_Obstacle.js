@@ -74,12 +74,16 @@ window.SCR_Obstacle = cc.Class({
 		// power up
 		if (this.position == ObstaclePosition.MIDDLE && g_scrGameplay.player.getComponent(SCR_Player).state == PlayerState.SMALL) {
             var r = Math.random();
-            if (r <= POWER_UP_RATE) {
-                this.spawnPowerUpBig();
+
+            if (r < 0.5) {
+                r = Math.random();
+                if (r < POWER_UP_RATE) {
+                    this.spawnPowerUpBig();
+                }
             }
             else {
                 r = Math.random();
-                if (r <= POWER_UP_TRUCK_RATE) {
+                if (r < POWER_UP_TRUCK_RATE) {
                     this.spawnPowerUpTruck();
                 }
             }
@@ -88,7 +92,7 @@ window.SCR_Obstacle = cc.Class({
 
     update(dt) {
         // score
-        if (this.position == ObstaclePosition.TOP && !this.passedPlayer && this.node.x < g_scrGameplay.player.x) {
+        if (this.position == ObstaclePosition.BOTTOM && !this.passedPlayer && this.node.x < g_scrGameplay.player.x) {
             g_scrGameplay.increaseScore();
             this.passedPlayer = true;
         }
@@ -100,11 +104,17 @@ window.SCR_Obstacle = cc.Class({
     },
 
     move() {
-        this.rb.linearVelocity = cc.v2(-OBSTACLE_MOVE_SPEED, 0);
-    },
+        if (g_scrGameplay.moveSpeed == MoveSpeed.NORMAL) {
+            this.rb.linearVelocity = cc.v2(-OBSTACLE_MOVE_SPEED, 0);
+        }
 
-    moveFast() {
-        this.rb.linearVelocity = cc.v2(-OBSTACLE_MOVE_SPEED * POWER_UP_MOVE_SPEED_MULTIPLIER , 0);
+        if (g_scrGameplay.moveSpeed == MoveSpeed.FAST) {
+            this.rb.linearVelocity = cc.v2(-OBSTACLE_MOVE_SPEED * OBSTACLE_FAST_MULTIPLIER, 0);
+        }
+
+        if (g_scrGameplay.moveSpeed == MoveSpeed.VERY_FAST) {
+            this.rb.linearVelocity = cc.v2(-OBSTACLE_MOVE_SPEED * OBSTACLE_VERY_FAST_MULTIPLIER , 0);
+        }
     },
 
     stop() {
@@ -151,7 +161,7 @@ window.SCR_Obstacle = cc.Class({
         else {
             powerUpFly = cc.instantiate(this.PFB_POWER_UP_FLY_WASP);
         }
-        
+
         powerUpFly.position = cc.v2(0, this.node.height * 0.5 + 150);
         powerUpFly.parent = this.node;
         this.powerUpFly = powerUpFly;

@@ -33,11 +33,20 @@ cc.Class({
 
     update (dt) {
         if (g_scrGameplay.state != State.FINISH) {
-            if (g_scrGameplay.movingFast) {
-                this.node.x -= BACKGROUND_MOVE_SPEED * 2 * POWER_UP_MOVE_SPEED_MULTIPLIER * dt;
-            }
-            else {
+            if (g_scrGameplay.moveSpeed == MoveSpeed.ZERO) {
                 this.node.x -= BACKGROUND_MOVE_SPEED * dt;
+            }
+
+            if (g_scrGameplay.moveSpeed == MoveSpeed.NORMAL) {
+                this.node.x -= BACKGROUND_MOVE_SPEED * BACKGROUND_NORMAL_MULTIPLIER * dt;
+            }
+
+            if (g_scrGameplay.moveSpeed == MoveSpeed.FAST) {
+                this.node.x -= BACKGROUND_MOVE_SPEED * BACKGROUND_FAST_MULTIPLIER * dt;
+            }
+
+            if (g_scrGameplay.moveSpeed == MoveSpeed.VERY_FAST) {
+                this.node.x -= BACKGROUND_MOVE_SPEED * BACKGROUND_VERY_FAST_MULTIPLIER * dt;
             }
 
             if (this.node.x <= -this.node.width) {
