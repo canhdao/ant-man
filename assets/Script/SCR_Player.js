@@ -161,7 +161,7 @@ window.SCR_Player = cc.Class({
             if (onGround) {
                 this.rb.linearVelocity = cc.v2(0, 1000);
                 this.rb.angularVelocity = -ROTATION_VELOCITY;
-				cc.audioEngine.play(g_scrGameplay.sndFly);
+				cc.audioEngine.play(g_scrGameplay.sndJump);
             }
         }
     },

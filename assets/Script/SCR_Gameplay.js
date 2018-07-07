@@ -156,6 +156,11 @@ cc.Class({
 			default: null,
 			url: cc.AudioClip
 		},
+
+        sndJump: {
+            default: null,
+            url: cc.AudioClip
+        },
 		
 		sndGameOver: {
 			default: null,
