@@ -146,6 +146,11 @@ cc.Class({
             default: null,
             type: cc.Node
         },
+
+        playerTruckWasp: {
+            default: null,
+            type: cc.Node
+        },
 		
 		sndFly: {
 			default: null,
@@ -300,6 +305,9 @@ cc.Class({
 
         this.playerTruckAnt.zIndex = LAYER_PLAYER;
         this.playerTruckAnt.active = false;
+
+        this.playerTruckWasp.zIndex = LAYER_PLAYER;
+        this.playerTruckWasp.active = false;
 
         this.pendingGenerateObstacles = false;
 
@@ -485,6 +493,25 @@ cc.Class({
             this.playerAnt.position = this.playerTruckAnt.position;
             this.playerAnt.getComponent(cc.RigidBody).linearVelocity = this.playerTruckAnt.getComponent(cc.RigidBody).linearVelocity;
             this.playerAnt.getComponent(cc.RigidBody).angularVelocity = this.playerTruckAnt.getComponent(cc.RigidBody).angularVelocity;
+        }
+
+        if (this.player == this.playerWasp) {
+            this.player = this.playerTruckWasp;
+            this.playerTruckWasp.position = this.playerWasp.position;
+            this.playerTruckWasp.getComponent(cc.RigidBody).linearVelocity = this.playerWasp.getComponent(cc.RigidBody).linearVelocity;
+            this.playerTruckWasp.getComponent(cc.RigidBody).angularVelocity = this.playerWasp.getComponent(cc.RigidBody).angularVelocity;
+            this.playerTruckWasp.getComponent(cc.RigidBody).gravityScale = 1;
+            this.playerWasp.active = false;
+            this.playerTruckWasp.active = true;
+            this.playerTruckWasp.awake = true;
+        }
+        else if (this.player == this.playerTruckWasp) {
+            this.player = this.playerWasp;
+            this.playerTruckWasp.active = false;
+            this.playerWasp.active = true;
+            this.playerWasp.position = this.playerTruckWasp.position;
+            this.playerWasp.getComponent(cc.RigidBody).linearVelocity = this.playerTruckWasp.getComponent(cc.RigidBody).linearVelocity;
+            this.playerWasp.getComponent(cc.RigidBody).angularVelocity = this.playerTruckWasp.getComponent(cc.RigidBody).angularVelocity;
         }
     },
 

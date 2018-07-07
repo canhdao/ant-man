@@ -10,7 +10,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "middle",
+    "_name": "PowerUpFly",
     "_objFlags": 0,
     "_parent": null,
     "_children": [],
@@ -25,13 +25,10 @@
       },
       {
         "__id__": 4
-      },
-      {
-        "__id__": 5
       }
     ],
     "_prefab": {
-      "__id__": 6
+      "__id__": 5
     },
     "_id": "",
     "_opacity": 255,
@@ -50,17 +47,17 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 215,
-      "height": 1453
+      "width": 642,
+      "height": 443
     },
     "_rotationX": 0,
     "_rotationY": 0,
-    "_scaleX": 1,
-    "_scaleY": 1,
+    "_scaleX": 0.5,
+    "_scaleY": 0.5,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": -120,
-      "y": -360
+      "x": 0,
+      "y": 0
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -78,7 +75,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "865fa0ca-09bc-4172-83b7-4b9b3702f4ed"
+      "__uuid__": "55ac9148-59b1-48ec-89ef-91b58e400e1c"
     },
     "_type": 0,
     "_sizeMode": 1,
@@ -96,51 +93,7 @@
     "_atlas": null
   },
   {
-    "__type__": "cc.RigidBody",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "_type": 1,
-    "_allowSleep": true,
-    "_gravityScale": 1,
-    "_linearDamping": 0,
-    "_angularDamping": 0,
-    "_linearVelocity": {
-      "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 0
-    },
-    "_angularVelocity": 0,
-    "_fixedRotation": false,
-    "enabledContactListener": false,
-    "bullet": false
-  },
-  {
-    "__type__": "5f72bm2iRdDgbakW5UYJXb7",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "PFB_POWER_UP": {
-      "__uuid__": "ffde5415-9c6f-42f3-8c19-8115e2a1d0ee"
-    },
-    "PFB_POWER_UP_TRUCK_ANT": {
-      "__uuid__": "5256a23e-735c-4f56-8804-261fd37d9d36"
-    },
-    "PFB_POWER_UP_FLY_ANT": null,
-    "PFB_POWER_UP_TRUCK_WASP": {
-      "__uuid__": "ad9d1257-b446-4fa1-b82e-c3d6cb31cf9e"
-    },
-    "PFB_POWER_UP_FLY_WASP": null,
-    "position": 1
-  },
-  {
-    "__type__": "cc.BoxCollider",
+    "__type__": "cc.CircleCollider",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -153,11 +106,16 @@
       "x": 0,
       "y": 0
     },
-    "_size": {
-      "__type__": "cc.Size",
-      "width": 215,
-      "height": 1453
-    }
+    "_radius": 140
+  },
+  {
+    "__type__": "4c7b8yAtZxPurrZD1AkIGFE",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -165,9 +123,9 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "ee98594a-59d1-4e1d-9f97-c8a5d2cb0354"
+      "__uuid__": "0b2ec256-9fbf-4218-9fd6-005ebb68d21f"
     },
-    "fileId": "28QKOwyXBJjKr21Ba2Fp9f",
+    "fileId": "f7rlxYsmlCW665t9n+DnPf",
     "sync": false
   }
 ]

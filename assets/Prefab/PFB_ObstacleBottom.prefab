@@ -244,9 +244,13 @@
     },
     "_enabled": true,
     "PFB_POWER_UP": null,
-    "PFB_POWER_UP_TRUCK": null,
-    "PFB_POWER_UP_FLY": {
+    "PFB_POWER_UP_TRUCK_ANT": null,
+    "PFB_POWER_UP_FLY_ANT": {
       "__uuid__": "e12be1e2-f56c-4d8b-9851-a5823c9d8a84"
+    },
+    "PFB_POWER_UP_TRUCK_WASP": null,
+    "PFB_POWER_UP_FLY_WASP": {
+      "__uuid__": "0b2ec256-9fbf-4218-9fd6-005ebb68d21f"
     },
     "position": 2
   },

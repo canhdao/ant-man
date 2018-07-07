@@ -8,7 +8,7 @@
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/life-cycle-callbacks.html
 
-var ObstaclePosition = cc.Enum({
+window.ObstaclePosition = cc.Enum({
     TOP:    0,
 	MIDDLE: 1,
     BOTTOM: 2
@@ -39,12 +39,22 @@ window.SCR_Obstacle = cc.Class({
 			type: cc.Prefab
 		},
 
-        PFB_POWER_UP_TRUCK: {
+        PFB_POWER_UP_TRUCK_ANT: {
             default: null,
             type: cc.Prefab
         },
 
-        PFB_POWER_UP_FLY: {
+        PFB_POWER_UP_FLY_ANT: {
+            default: null,
+            type: cc.Prefab
+        },
+
+        PFB_POWER_UP_TRUCK_WASP: {
+            default: null,
+            type: cc.Prefab
+        },
+
+        PFB_POWER_UP_FLY_WASP: {
             default: null,
             type: cc.Prefab
         },
@@ -118,14 +128,30 @@ window.SCR_Obstacle = cc.Class({
     },
 
     spawnPowerUpTruck() {
-        var powerUpTruck = cc.instantiate(this.PFB_POWER_UP_TRUCK);
+        var powerUpTruck = null;
+
+        if (g_scrGameplay.player == g_scrGameplay.playerAnt) {
+            powerUpTruck = cc.instantiate(this.PFB_POWER_UP_TRUCK_ANT);
+        }
+        else {
+            powerUpTruck = cc.instantiate(this.PFB_POWER_UP_TRUCK_WASP);
+        }
+
         powerUpTruck.position = cc.v2(0, 0);
         powerUpTruck.parent = this.node;
         this.powerUpTruck = powerUpTruck;
     },
 
     spawnPowerUpFly() {
-        var powerUpFly = cc.instantiate(this.PFB_POWER_UP_FLY);
+        var powerUpFly = null;
+
+        if (g_scrGameplay.player == g_scrGameplay.playerTruckAnt) {
+            powerUpFly = cc.instantiate(this.PFB_POWER_UP_FLY_ANT);
+        }
+        else {
+            powerUpFly = cc.instantiate(this.PFB_POWER_UP_FLY_WASP);
+        }
+        
         powerUpFly.position = cc.v2(0, this.node.height * 0.5 + 150);
         powerUpFly.parent = this.node;
         this.powerUpFly = powerUpFly;

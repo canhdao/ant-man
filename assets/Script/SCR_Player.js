@@ -149,7 +149,7 @@ window.SCR_Player = cc.Class({
             for (var i = 0; i < g_scrGameplay.obstacles.length; i++) {
                 var left = g_scrGameplay.obstacles[i].x - g_scrGameplay.obstacles[i].width * 0.5;
                 var right = g_scrGameplay.obstacles[i].x + g_scrGameplay.obstacles[i].width * 0.5;
-                if (this.node.x >= left && this.node.x <= right) {
+                if (g_scrGameplay.obstacles[i].getComponent(SCR_Obstacle).position == ObstaclePosition.BOTTOM && this.node.x >= left && this.node.x <= right) {
                     found = g_scrGameplay.obstacles[i];
                     break;
                 }
@@ -157,7 +157,7 @@ window.SCR_Player = cc.Class({
 
             if (found == null) found = g_scrGameplay.ground1;
 
-            var onGround = this.compare(this.node.y, found.y + found.height * 0.5 + this.node.getComponent(cc.CircleCollider).radius * this.node.scaleX);
+            var onGround = this.compare(this.node.y - (this.node.getComponent(cc.CircleCollider).radius - this.node.getComponent(cc.CircleCollider).offset.y) * this.node.scaleX, found.y + found.height * 0.5);
             if (onGround) {
                 this.rb.linearVelocity = cc.v2(0, 1000);
                 this.rb.angularVelocity = -ROTATION_VELOCITY;
