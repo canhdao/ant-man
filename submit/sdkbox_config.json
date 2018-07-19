@@ -16,6 +16,7 @@
     }, 
     "ios": {
         "AdMob": {
+            "testdevice": "36e6813a9776d338128e27da33a0467f", 
             "test": false, 
             "safearea": true, 
             "ads": {

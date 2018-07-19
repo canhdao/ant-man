@@ -49,7 +49,19 @@ cc.Class({
         else {
             this.getComponent(cc.RigidBody).angularVelocity = randomRange(300, 500);
         }
+
+        this.life = 0;
     },
 
-    // update (dt) {},
+    update(dt) {
+        this.life += dt;
+
+        // out of screen
+        if (this.node.x > SCREEN_WIDTH * 0.5 + this.node.width * this.node.scaleX
+        ||  this.node.y > SCREEN_HEIGHT * 0.5 + this.node.width * this.node.scaleX
+        ||  this.node.y < -SCREEN_HEIGHT * 0.5 - this.node.width * this.node.scaleX
+        ||  this.life > 2) {
+            this.node.destroy();
+        }
+    },
 });
