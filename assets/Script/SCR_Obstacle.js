@@ -98,7 +98,7 @@ window.SCR_Obstacle = cc.Class({
         }
 
         // out of screen
-        if (this.node.x < -SCREEN_WIDTH * 0.5 - this.node.width * 0.5 * this.node.scaleX - g_scrGameplay.OBSTACLE_DISTANCE) {
+        if (this.node.x < -SCREEN_WIDTH * 0.5 - this.node.width * 0.5 * this.node.scaleX/* - g_scrGameplay.OBSTACLE_DISTANCE_FLY_MODE*/) {
 			this.clean();
         }
     },
