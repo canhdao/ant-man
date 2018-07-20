@@ -10,7 +10,7 @@ window.OBSTACLE_VERY_FAST_MULTIPLIER = 3;
 window.OBSTACLE_DISTANCE_K_FLY_MODE = 0.75;           // distance between obstacles = OBSTACLE_DISTANCE_K * SCREEN_WIDTH
 window.OBSTACLE_DISTANCE_K_TRUCK_MODE = 0.9;           // distance between obstacles = OBSTACLE_DISTANCE_K * SCREEN_WIDTH
 window.OBSTACLE_DISTANCE_K_TRUCK_MODE_FIRST_TIME = 1.2;
-window.OBSTACLE_SPACE_K = 0.7;              // space between top and bottom obstacles = OBSTACLE_SPACE_K * SCREEN_WIDTH
+window.OBSTACLE_SPACE_K = 0.48;              // space between top and bottom obstacles = OBSTACLE_SPACE_K * SCREEN_WIDTH
 window.OBSTACLE_CENTER_RANDOM_RANGE = 0.55;
 
 window.POWER_UP_RATE = 0.15;

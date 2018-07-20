@@ -241,7 +241,7 @@ cc.Class({
         cc.director.getPhysicsManager().gravity = cc.v2(0, -3000);
         cc.director.getCollisionManager().enabled = true;
 		//cc.director.getCollisionManager().enabledDebugDraw = true;
-		cc.director.setDisplayStats(true);
+		//cc.director.setDisplayStats(true);
 		
         SCREEN_WIDTH = this.node.width;
         SCREEN_HEIGHT = this.node.height;
