@@ -1,12 +1,13 @@
 {
-  "ver": "1.0.0",
+  "ver": "2.2.0",
   "uuid": "5680b49a-ad40-4b56-b865-d21ced6379f8",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
+  "premultiplyAlpha": false,
   "subMetas": {
     "TEX_PowerUpTruckWasp": {
-      "ver": "1.0.3",
+      "ver": "1.0.4",
       "uuid": "2a0d34d8-86cf-45e6-ae7d-cca1407510bf",
       "rawTextureUuid": "5680b49a-ad40-4b56-b865-d21ced6379f8",
       "trimType": "auto",

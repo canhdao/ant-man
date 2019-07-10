@@ -161,77 +161,77 @@ cc.Class({
 		
 		sndFly: {
 			default: null,
-			url: cc.AudioClip
+			type: cc.AudioClip
 		},
 
         sndJump: {
             default: null,
-            url: cc.AudioClip
+            type: cc.AudioClip
         },
 		
 		sndGameOver: {
 			default: null,
-			url: cc.AudioClip
+			type: cc.AudioClip
 		},
 		
 		sndGameplay: {
 			default: null,
-			url: cc.AudioClip
+			type: cc.AudioClip
 		},
 		
 		sndGameplay_iOS: {
 			default: null,
-			url: cc.AudioClip
+			type: cc.AudioClip
 		},
 		
 		sndMainMenu: {
 			default: null,
-			url: cc.AudioClip
+			type: cc.AudioClip
 		},
 		
 		sndMainMenu_iOS: {
 			default: null,
-			url: cc.AudioClip
+			type: cc.AudioClip
 		},
 		
 		sndNext: {
 			default: null,
-			url: cc.AudioClip
+			type: cc.AudioClip
 		},
 		
 		sndPowerUp: {
 			default: null,
-			url: cc.AudioClip
+			type: cc.AudioClip
 		},
 		
 		sndShrink: {
 			default: null,
-			url: cc.AudioClip
+			type: cc.AudioClip
 		},
 
         sndEnlarge: {
             default: null,
-            url: cc.AudioClip
+            type: cc.AudioClip
         },
 
         sndBigImpact: {
             default: null,
-            url: cc.AudioClip
+            type: cc.AudioClip
         },
 
         sndFalling: {
             default: null,
-            url: cc.AudioClip
+            type: cc.AudioClip
         },
 
         sndImpactWall: {
             default: null,
-            url: cc.AudioClip
+            type: cc.AudioClip
         },
 
         sndImpactLand: {
             default: null,
-            url: cc.AudioClip
+            type: cc.AudioClip
         }
     },
 
